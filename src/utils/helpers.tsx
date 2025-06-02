@@ -26,3 +26,10 @@ export const hasPermission = (access: any[], permissionKey: string, required: st
 export const formatedDate = (date: Date, strFormatted: string = 'YYYY-MM-DD') :string => {
   return format(date, strFormatted);
 }
+
+export const getListPermissions = (access: any[], path: string): string[] => {
+  const menu = findSlugByPath(access, path);
+  if (!menu || !menu.access_permissions) return [];
+  const granted = menu.access_permissions.map((perm: any) => perm.permission.name);
+  return granted;
+}

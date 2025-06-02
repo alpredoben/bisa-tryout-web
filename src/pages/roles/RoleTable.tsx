@@ -14,7 +14,6 @@ import {
   PencilIcon,
   TrashBinIcon,
 } from "../../assets/icons";
-import { useModal } from "../../hooks/useModal";
 import { useDeleteRoleMutation } from "../../services/roleApi";
 
 interface ApiResponse {
@@ -41,6 +40,7 @@ interface TableProps {
   onEdit: (data: any) => void;
   onSuccess?: (message: string) => void; 
   refetchTable?: () => void;
+  permissions: any[]
 }
 
 interface TableHeaders {
@@ -67,11 +67,12 @@ export default function RoleTable({
   setOrderName,
   onEdit,
   onSuccess,
-  refetchTable
+  refetchTable,
+  permissions
 }: TableProps) {
   const { records, total_row, limit, total_page } = datatable;
 
-  const [deleteRole, { isLoading: isDeleting }] = useDeleteRoleMutation();
+  const [deleteRole] = useDeleteRoleMutation();
 
   const eventDeleteHandler = async (data: any): Promise<void> => {
     if (window.confirm(`Apakah kamu yakin ingin menghapus role "${data.role_name}" ini?`)) {
@@ -178,18 +179,18 @@ export default function RoleTable({
                       </TableCell>
                       <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-slate-600">
                         <div className="flex gap-2">
-                          <button
+                          {permissions.includes('update') && (<button
                             onClick={() => onEdit(record.role_id)}
                             className="p-2 text-white hover:text-gray-100 bg-yellow-500 hover:bg-yellow-400 rounded text-sm"
                           >
                             <PencilIcon />
-                          </button>
-                          <button
+                          </button>)}
+                          {permissions.includes('delete') && (<button
                             onClick={() => eventDeleteHandler(record)}
                             className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm"
                           >
                             <TrashBinIcon />
-                          </button>
+                          </button>)}
                         </div>
                       </TableCell>
                     </TableRow>

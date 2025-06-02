@@ -1,0 +1,22 @@
+// File: ./src/stores/index.ts
+import { configureStore } from '@reduxjs/toolkit';
+import { persistedReducer } from './rootReducer';
+import { persistStore } from 'redux-persist';
+import { useDispatch } from 'react-redux';
+import { authApi } from '../services/authApi';
+import { roleApi } from '../services/roleApi';
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }).concat(
+      authApi.middleware,
+      roleApi.middleware
+    ),
+});
+
+export const persistor = persistStore(store);
+export type AppDispatch = typeof store.dispatch;
+export const useAppDispatch = () => useDispatch<AppDispatch>();

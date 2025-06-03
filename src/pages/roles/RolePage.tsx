@@ -11,8 +11,6 @@ import {RoleModal} from "./RoleModal";
 import { useModal } from "../../hooks/useModal";
 import { Slide, toast } from "react-toastify";
 import { useAppSelector } from "../../stores/hooks";
-import { getListPermissions } from "../../utils/helpers";
-import { useLocation } from "react-router-dom";
 
 const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100]
 
@@ -24,15 +22,13 @@ const RolePage = () => {
   const { isOpen, openModal, closeModal } = useModal();
   const [directionName, setDirectionName] = useState("created_at");
   const [orderName, setOrderName] = useState<"asc" | "desc">("desc");
+
   const [selectedRoleId, setSelectedRoleId] = useState<any | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const location = useLocation();
-  const currentPath = location.pathname;
+  const listPermissions = useAppSelector((state) => state.auth.grantedPermissions) || [];
 
-  const {user} = useAppSelector((state) => state.auth);
-  const listAccess = user?.list_access || []
-  const listPermissions = getListPermissions(listAccess, currentPath);
+  
   const {
     data = {
       records: [],
@@ -107,14 +103,15 @@ const RolePage = () => {
                 placeholder="Search roles..."
                 className="px-3 py-2 border border-gray-300 rounded text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-primary"
               />
+              
               <button
                 onClick={eventHandleSearch}
                 className="bg-slate-500 hover:bg-slate-700 text-white px-4 py-2 rounded text-sm"
               >
                 Search
               </button>
-              
-              {listPermissions.includes('create') && (<button
+
+              {listPermissions?.includes("create") && (<button
                 onClick={openModal}
                 className="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm whitespace-nowrap"
               >
@@ -148,7 +145,7 @@ const RolePage = () => {
                 toast.success(message, { transition: Slide });
               }}
               refetchTable={refetch}
-              permissions={listPermissions}
+              listPermissions={listPermissions}
             />
           )}
         </ComponentCard>

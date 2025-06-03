@@ -40,7 +40,7 @@ interface TableProps {
   onEdit: (data: any) => void;
   onSuccess?: (message: string) => void; 
   refetchTable?: () => void;
-  permissions: any[]
+  listPermissions: string[] | []
 }
 
 interface TableHeaders {
@@ -68,7 +68,7 @@ export default function RoleTable({
   onEdit,
   onSuccess,
   refetchTable,
-  permissions
+  listPermissions
 }: TableProps) {
   const { records, total_row, limit, total_page } = datatable;
 
@@ -179,13 +179,13 @@ export default function RoleTable({
                       </TableCell>
                       <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-slate-600">
                         <div className="flex gap-2">
-                          {permissions.includes('update') && (<button
+                          {listPermissions.includes('update') && (<button
                             onClick={() => onEdit(record.role_id)}
                             className="p-2 text-white hover:text-gray-100 bg-yellow-500 hover:bg-yellow-400 rounded text-sm"
                           >
                             <PencilIcon />
                           </button>)}
-                          {permissions.includes('delete') && (<button
+                          {listPermissions.includes('delete') && (<button
                             onClick={() => eventDeleteHandler(record)}
                             className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm"
                           >

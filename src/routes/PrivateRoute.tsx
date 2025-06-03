@@ -1,45 +1,63 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
-import {Navigate, Outlet, useLocation} from 'react-router-dom';
-import {useAppSelector} from '../stores/hooks'
-import { findSlugByPath } from '../utils/helpers';
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/rules-of-hooks */
+import React, { useEffect, useMemo } from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAppSelector } from "../stores/hooks";
+import { getListPermissions } from "../utils/helpers";
+import { useDispatch } from "react-redux";
+import { setGrantedPermissions } from "../features/authSlice";
 
 interface PrivateRouteProps {
   requiredPermission?: string;
 }
 
-
-
 const PrivateRoute: React.FC<PrivateRouteProps> = ({
-  requiredPermission =  'read'
+  requiredPermission = "read",
 }) => {
+  const dispatch = useDispatch();
   const location = useLocation();
-  const {user, token} = useAppSelector((state) => state.auth);
+  const currentPath = location.pathname;
+
+  const auth = useAppSelector((state) => state.auth);
+
+  const menuAccess = auth?.user?.list_access || [];
+  const grantPermissions = auth?.grantedPermissions;
+
+  const listPermissions = useMemo(() => {
+    return getListPermissions(menuAccess, currentPath) || [];
+  }, [menuAccess, currentPath]);
+
+  const isAuthenticated = auth?.token && auth?.user;
+  const hasPermission = listPermissions.includes(requiredPermission);
 
   // Check token login
-  if(!token || !user) {
-    return <Navigate to={`/login`} state={{from: location}} replace />
+  if (!auth?.token || !auth?.user) {
+    return <Navigate to={`/login`} state={{ from: location }} replace />;
   }
 
+  // Selalu jalankan hook
+  useEffect(() => {
+    const isSame =
+      JSON.stringify(listPermissions) === JSON.stringify(grantPermissions);
+    if (!isSame) {
+      dispatch(setGrantedPermissions(listPermissions));
+    }
+  }, [listPermissions, grantPermissions, dispatch]);
 
-  const currentPath = location.pathname;
-  const menuAccess = user.list_access || [];
-
-  // Cari menu yang sesuai dengan path
-  const matchedMenu = findSlugByPath(menuAccess, currentPath);
-
-  if(!matchedMenu) {
-    return <Navigate to={'/403'} replace />
+  // Setelah semua hook dipanggil, baru evaluasi
+  if (!isAuthenticated) {
+    return <Navigate to={`/login`} state={{ from: location }} replace />;
   }
 
-  // Check permission yang dibutuhkan
-  const hasPermission = matchedMenu.access_permissions.some((access: any) => access.permission.name === requiredPermission);
-
-  if(!hasPermission) {
-    return <Navigate to={'/403'} replace />
+  if (listPermissions.length === 0) {
+    return <Navigate to={"/403"} replace />;
   }
 
-  return <Outlet />
-}
+  if (!hasPermission) {
+    return <Navigate to={"/403"} replace />;
+  }
 
-export default PrivateRoute
+  return <Outlet />;
+};
+
+export default PrivateRoute;

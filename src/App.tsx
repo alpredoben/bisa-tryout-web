@@ -14,6 +14,7 @@ import { RolePage } from "./pages/roles";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import { useSelector } from "react-redux";
 import type { RootState } from "./stores/rootReducer";
+import { MenuPage } from "./pages/menu";
 
 const App = () => {
    // Mengambil status autentikasi dari Redux store
@@ -53,12 +54,21 @@ const App = () => {
               <Route index element={<DashboardPage />} />
             </Route>
 
+            {/* Configuration */}
             <Route
               path="/master-role"
               element={<PrivateRoute requiredPermission="read" />}
             >
               <Route index element={<RolePage />} />
             </Route>
+
+            <Route
+              path="/master-menu"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<MenuPage />} />
+            </Route>
+
           </Route>
         </Routes>
       </BrowserRouter>

@@ -40,7 +40,7 @@ interface TableProps {
   onEdit: (data: any) => void;
   onSuccess?: (message: string) => void; 
   refetchTable?: () => void;
-  listPermissions: string[] | []
+  listPermissions: string[]
 }
 
 interface TableHeaders {

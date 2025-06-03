@@ -12,6 +12,8 @@ import AppHeader from "./AppHeader";
 const LayoutContent: React.FC = () => {
   const {isExpanded, isHovered, isMobileOpen} = useSidebar();
 
+  console.log({isExpanded, isHovered, isMobileOpen})
+
   return (
     <div className="min-h-screen xl:flex">
       <div>

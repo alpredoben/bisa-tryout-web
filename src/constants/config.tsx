@@ -15,6 +15,9 @@ export const RestApi = {
       Create: '/roles',
       Update: (id: string) => `/roles/${id}`,
       Delete: (id: string) => `/roles/${id}`
+    },
+    Menu: {
+      Fetch: '/menu'
     }
   } 
 }

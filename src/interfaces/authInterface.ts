@@ -4,6 +4,7 @@ export interface I_AuthState {
   token: string | null;
   loading: boolean;
   error: string | null;
+  grantedPermissions?: string[] 
 }
 
 export interface I_RoleAccess {

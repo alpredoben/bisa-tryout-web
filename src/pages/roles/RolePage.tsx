@@ -4,13 +4,13 @@ import { useState } from "react";
 import { BreadCrumb } from "../../components/common/BreadCrumb";
 import { ComponentCard } from "../../components/common/ComponentCard";
 import { PageMeta } from "../../components/common/PageMeta";
-import { useFetchRolesQuery, useFindRoleByIdQuery } from "../../services/roleApi";
+import { useFetchRolesQuery } from "../../services/roleApi";
 import RoleTable from "./RoleTable";
 import { PlusIcon } from "../../assets/icons";
 import {RoleModal} from "./RoleModal";
 import { useModal } from "../../hooks/useModal";
-import type { I_RoleInput } from "../../interfaces/roleInterface";
 import { Slide, toast } from "react-toastify";
+import { useAppSelector } from "../../stores/hooks";
 
 const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100]
 
@@ -26,7 +26,9 @@ const RolePage = () => {
   const [selectedRoleId, setSelectedRoleId] = useState<any | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
+  const listPermissions = useAppSelector((state) => state.auth.grantedPermissions) || [];
 
+  
   const {
     data = {
       records: [],
@@ -101,19 +103,22 @@ const RolePage = () => {
                 placeholder="Search roles..."
                 className="px-3 py-2 border border-gray-300 rounded text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-primary"
               />
+              
               <button
                 onClick={eventHandleSearch}
                 className="bg-slate-500 hover:bg-slate-700 text-white px-4 py-2 rounded text-sm"
               >
                 Search
               </button>
-              <button
+
+              {listPermissions?.includes("create") && (<button
                 onClick={openModal}
                 className="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm whitespace-nowrap"
               >
                 <PlusIcon/>
                 <span>Tambah</span>
-              </button>
+              </button>)}
+              
             </div>
           </div>
 
@@ -140,6 +145,7 @@ const RolePage = () => {
                 toast.success(message, { transition: Slide });
               }}
               refetchTable={refetch}
+              listPermissions={listPermissions}
             />
           )}
         </ComponentCard>

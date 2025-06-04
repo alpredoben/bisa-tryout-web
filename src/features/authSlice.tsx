@@ -6,7 +6,8 @@ const initialState: I_AuthState = {
   user: null,
   token: null,
   loading: false,
-  error: null
+  error: null,
+  grantedPermissions: []
 }
 
 const authSlice = createSlice({
@@ -32,6 +33,7 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       localStorage.clear();
+      state.grantedPermissions = [];
     },
 
     setLoading: (state, action: PayloadAction<boolean>) => {
@@ -41,10 +43,14 @@ const authSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+
+    setGrantedPermissions: (state, action: PayloadAction<string[]>) => {
+      state.grantedPermissions = action.payload;
+    },
   }
 });
 
 
-export const { setAuth, clearAuth, setLoading, setError, setUserProfile} = authSlice.actions;
+export const { setAuth, clearAuth, setLoading, setError, setUserProfile, setGrantedPermissions} = authSlice.actions;
 
 export default authSlice.reducer;

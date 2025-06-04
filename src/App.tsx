@@ -10,6 +10,7 @@ import PrivateRoute from "./routes/PrivateRoute";
 import AdminLayout from "./layouts/admin/AdminLayout";
 import NotFoundPage from "./pages/NotFoundPage";
 import { RolePage } from "./pages/roles";
+import { PermissionPage } from "./pages/permissions";
 
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import { useSelector } from "react-redux";

@@ -70,6 +70,13 @@ const App = () => {
               <Route index element={<MenuPage />} />
             </Route>
 
+            <Route
+              path="/master-permission"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<PermissionPage />} />
+            </Route>
+
           </Route>
         </Routes>
       </BrowserRouter>

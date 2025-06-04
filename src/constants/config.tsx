@@ -16,6 +16,13 @@ export const RestApi = {
       Update: (id: string) => `/roles/${id}`,
       Delete: (id: string) => `/roles/${id}`
     },
+    Permissions: {
+      FetchParams: '/permissions',
+      FindById: (id:string) => `/permissions/${id}`,
+      Create: '/permissions',
+      Update: (id: string) => `/permissions/${id}`,
+      Delete: (id: string) => `/permissions/${id}`
+    },
     Menu: {
       Fetch: '/menu'
     }

@@ -18,6 +18,12 @@ export const RestApi = {
     },
     Menu: {
       Fetch: '/menu'
+    },
+    Files: {
+      SaveFile: '/files',
+      GetFile: (fileName: string) => `/files/${fileName}`,
+      DeleteFile: (fileName: string) => `/files/${fileName}`,
+      UpdateFile: (moduleName: string, id:string) => `/files/${moduleName}/${id}`
     }
   } 
 }

@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { authApi } from '../services/authApi';
 import { roleApi } from '../services/roleApi';
 import { menuApi } from '../services/menuApi';
+import { permissionApi } from '../services/permissionApi';
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -15,7 +16,8 @@ export const store = configureStore({
     }).concat(
       authApi.middleware,
       roleApi.middleware,
-      menuApi.middleware
+      menuApi.middleware,
+      permissionApi.middleware,
     ),
 });
 

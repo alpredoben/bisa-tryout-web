@@ -9,6 +9,7 @@ import { persistedSidebarReducer } from '../features/sidebarSlice';
 import { roleApi } from '../services/roleApi';
 import { menuApi } from '../services/menuApi';
 import { permissionApi } from '../services/permissionApi';
+import { userApi } from '../services/userApi';
 
 const persistConfig = {
   key: 'root',
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   [roleApi.reducerPath]: roleApi.reducer,
   [menuApi.reducerPath]: menuApi.reducer,
   [permissionApi.reducerPath]: permissionApi.reducer,
+  [userApi.reducerPath]: userApi.reducer,
 });
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);

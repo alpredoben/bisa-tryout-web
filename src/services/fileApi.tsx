@@ -38,7 +38,7 @@ export const filesApi = createApi({
 
         return {
           url: RestApi.Endpoint.Files.UpdateFile(module_name, id),
-          method: 'POST',
+          method: 'PUT',
           body: formData,
         };
       },

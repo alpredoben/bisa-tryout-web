@@ -2,7 +2,7 @@
 export interface I_UserInput {
   name: string;
   email: string;
-  file: string;
+  file_id: string;
   phone: string;
   password: string;
   role_id: string
@@ -12,8 +12,13 @@ export interface I_UserFormatted {
   user_id: string;
   name: string;
   email: string;
-  photo: string;
+  photo: {
+    file_id: string,
+    file_url: string
+    file_name: string
+  };
   phone: string;
+  role: string
   created_at?: any | null;
   updated_at?: any | null;
 }

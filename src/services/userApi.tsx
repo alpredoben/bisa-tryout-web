@@ -81,5 +81,5 @@ export const {
   useFindUserByIdQuery,
   useCreateUserMutation,
   useUpdateUserMutation,
-  useDeleteUserMutation
+  useDeleteUserMutation,
 } = userApi;

@@ -53,7 +53,7 @@ const tableHeaders: TableHeaders[] = [
   { id: 1, title: "No" },
   { id: 2, title: "Name", name: "name" },
   { id: 3, title: "Email", name: "email" },
-  { id: 4, title: "Poto", name: "poto" },
+  // { id: 4, title: "Poto", name: "poto" },
   { id: 5, title: "Phone", name: "phone" },
   { id: 6, title: "Created At", name: "created_at" },
   { id: 7, title: "Action" },
@@ -176,9 +176,9 @@ export default function UserTable({
                       <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-slate-600">
                         {record.email}
                       </TableCell>
-                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-slate-600">
-                        {record.photo}
-                      </TableCell>
+                      {/* <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-slate-600">
+                        {record.photo.file_id}
+                      </TableCell> */}
                       <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-slate-600">
                         {record.phone}
                       </TableCell>

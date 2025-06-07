@@ -8,8 +8,6 @@ import type {
   I_UserResponsePaginationFormatted,
 } from "../interfaces/userInterface";
 
-import type { I_UploadFileResponse } from "../interfaces/fileUploadInterface"
-
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({
@@ -58,23 +56,6 @@ export const userApi = createApi({
       invalidatesTags: [{ type: "User" }],
     }),
 
-    uploadPhoto: builder.mutation<I_UploadFileResponse, File>({
-      query: (file) => {
-        const formData = new FormData();
-        formData.append("file", file);
-
-        return {
-          url: RestApi.Endpoint.FileStorage.Upload, // misal "/users/upload"
-          method: "POST",
-          body: formData,
-        };
-      },
-      invalidatesTags: [{ type: "User" }],
-      transformResponse: (response: any): I_UploadFileResponse => {
-        return response.data; // ambil bagian `data` saja
-      },
-    }),
-
     updateUser: builder.mutation<any, { user_id: string; data: I_UserInput }>({
       query: ({ user_id, data }) => ({
         url: RestApi.Endpoint.Users.Update(user_id),
@@ -101,5 +82,4 @@ export const {
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
-  useUploadPhotoMutation,
 } = userApi;

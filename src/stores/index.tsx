@@ -7,6 +7,7 @@ import { authApi } from '../services/authApi';
 import { roleApi } from '../services/roleApi';
 import { menuApi } from '../services/menuApi';
 import { permissionApi } from '../services/permissionApi';
+import { filesApi } from '../services/fileApi';
 import { userApi } from '../services/userApi';
 
 export const store = configureStore({
@@ -19,7 +20,8 @@ export const store = configureStore({
       roleApi.middleware,
       menuApi.middleware,
       permissionApi.middleware,
-      userApi.middleware,
+      filesApi.middleware,
+      userApi.middleware
     ),
 });
 

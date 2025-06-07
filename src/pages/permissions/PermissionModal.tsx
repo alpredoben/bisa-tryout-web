@@ -57,7 +57,6 @@ export function PermissionModal({
       let message: string = '';
       if (isEditMode && selectedPermissionId) {
         const response = await updatePermission({ permission_id: selectedPermissionId, data: payload }).unwrap();
-        console.log({RESPONSE: response})
         message = response?.message
       } else {
         const response = await createPermission(payload).unwrap();

@@ -8,9 +8,13 @@ import {
   useCreateUserMutation,
   useFindUserByIdQuery,
   useUpdateUserMutation,
-  useUploadPhotoMutation,
 } from "../../services/userApi";
 import {toast } from "react-toastify";
+
+import {
+  useSaveFileMutation,
+  useUpdateFileMutation,
+} from "../../services/fileApi";
 
 interface I_UserModal {
   isOpen: boolean;
@@ -46,18 +50,27 @@ export function UserModal({
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
   
   const [fileUrl, setFileUrl] = useState<string>("");
-  const [fileName, setFileName] = useState<string>("");
   const [fileId, setFileId] = useState<string>("");
-  const [uploadPhoto, { isLoading: isUploading }] = useUploadPhotoMutation();
+  const [uploadPhoto, { isLoading: isUploading }] = useSaveFileMutation();
+  const [editPhoto, { isLoading: isUpdateUploading }] = useUpdateFileMutation();
 
   const handleUploadPhoto = async (file: File) => {
     try {
-      const response= await uploadPhoto(file).unwrap();
-      console.log(response);
-      setFileUrl(response.file_url);
-      setFileName(response.file_name);
-      setFileId(response.file_id);
-      toast.success("Foto berhasil di-upload!");
+      if (!isEditMode) {
+        const response= await uploadPhoto(file).unwrap();
+        setFileUrl(response.data.file_url);
+        setFileId(response.data.file_id);
+        toast.success("Foto berhasil di-upload!");
+      } else {
+        const response= await editPhoto({
+          id: selectedUserId,
+          module_name: "users",
+          file, // ✅ Gunakan langsung `file` dari input
+        }).unwrap();
+        setFileUrl(response.data.file_url);
+        setFileId(response.data.file_id);
+        toast.success("Foto berhasil update!");
+      }
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("Gagal mengunggah foto");
@@ -167,23 +180,20 @@ export function UserModal({
             <input
               id="photo"
               type="file"
-              // value={photoFile}
-              // onChange={(e) => {
-              //   const file = e.target.files?.[0] || null;
-              //   setPhotoFile(file);
-              // }}
               onChange={(e) => {
                 const file = e.target.files?.[0] || undefined;
                 if (file) {
                   handleUploadPhoto(file);
                 }
               }}
-              // onChange={(e) => setPhoto(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
               placeholder="Masukkan photo user"
             />
             {
-              isUploading ? "Uploading..." : ""
+              isUploading ? "uploading..." : ""
+            }
+            {
+              isUpdateUploading ? "updating..." : ""
             }
             {fileUrl && (
               <img

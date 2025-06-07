@@ -1,45 +1,130 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "../../components/ui/modal";
-
-interface I_MenuModalProps {
-  isOpen: boolean;
-  closeModal: () => void;
-  isEditMode?: boolean;
-}
-
-interface I_MenuInput {
-  name: string;
-  slug: string;
-  order_number: number;
-  parent_id?: any | null;
-  image?: string | null;
-  file?: any | null;
-}
+import { toast } from "react-toastify";
+import {
+  useCreateMenuMutation,
+  useFetchMenuQuery,
+  useFindMenuByIdQuery,
+  useUpdateMenuMutation,
+} from "../../services/menuApi";
+import { SearchableDropdown } from "../../components/common/SearchableDropdown";
+import type {
+  I_MenuInput,
+  I_MenuModalProps,
+} from "../../interfaces/menuInterface";
+import {
+  useSaveFileMutation,
+  useUpdateFileMutation,
+} from "../../services/fileApi";
 
 interface I_FileInput {
   module_name: string;
-  file?: string | null;
+  file?: File | string | null;
+  previewUrl?: string | null
 }
 
 export function MenuModal({
   isOpen,
   closeModal,
   isEditMode = false,
+  selectMenuId,
+  selectedParentId,
+  refetchData,
+  onSuccess,
 }: I_MenuModalProps) {
+  const { data: menuData } = useFindMenuByIdQuery(selectMenuId!, {
+    skip: !isEditMode || !selectMenuId,
+  });
+
   const [formData, setFormData] = useState<I_MenuInput>({
     name: "",
     slug: "",
     order_number: 1,
     parent_id: null,
-    file: null,
+    file_id: null,
   });
 
   const [formFile, setFormFile] = useState<I_FileInput>({
     module_name: "menu",
     file: null,
+    previewUrl: null
   });
+
+  const [updateMenu, { isLoading: isUpdating }] = useUpdateMenuMutation();
+  const [createMenu, { isLoading: isCreating }] = useCreateMenuMutation();
+  const [saveFile] = useSaveFileMutation();
+  const [updateFile] = useUpdateFileMutation();
+
+  const { data: menuList, isLoading: isLoadingMenuList } = useFetchMenuQuery();
+  const parentMenuOptions = [
+    { id: null, name: "Tidak ada" },
+    ...(menuList?.map((item: any) => ({
+      id: item.menu_id,
+      name: item.name,
+    })) ?? []),
+  ];
+
+  const resetModal = () => {
+    setFormData({
+      ...formData,
+      name: "",
+      slug: "",
+      order_number: 1,
+      parent_id: null,
+      file_id: null
+    })
+
+    setFormFile({
+      ...formFile,
+      file: null
+    })
+  }
+
+  useEffect(() => {
+    if (formFile.file instanceof File) {
+      const objectUrl = URL.createObjectURL(formFile.file);
+      setFormFile({...formFile, previewUrl: objectUrl})
+      return () => URL.revokeObjectURL(objectUrl); // clean up
+    } else if (typeof formFile.file === "string") {
+      setFormFile({...formFile, previewUrl: formFile.file})
+    }
+  }, [formFile.file]);
+
+
+  useEffect(() => {
+    if(isOpen) {
+      resetModal();
+    }
+
+    if (isEditMode && menuData) {
+      setFormData({
+        ...formData,
+        name: menuData.name,
+        slug: menuData.slug,
+        order_number: menuData.order_number,
+        parent_id: menuData.parent_id,
+      });
+      if(menuData?.icon?.file_url) {
+        setFormFile({...formFile, previewUrl: menuData.icon.file_url})
+      }
+      
+    } else if (selectedParentId != null) {
+      setFormData({
+        ...formData,
+        parent_id: selectedParentId,
+      });
+    } else if (!isOpen) {
+      setFormData({
+        ...formData,
+        name: "",
+        slug: "",
+        order_number: 1,
+        parent_id: null,
+      });
+    }
+  }, [menuData, isEditMode, isOpen]);
 
   const eventOnChangeInput = (e: any) => {
     setFormData({
@@ -48,20 +133,97 @@ export function MenuModal({
     });
   };
 
-  const handleImageUpload = (e: any) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormFile({
-        ...formFile,
-        file: URL.createObjectURL(file),
-      });
+  const eventUploadFileHandler = async (e: any) => {
+    e.preventDefault();
+    const file: File = e.target.files[0];
+  
+    if (!file) return;
+  
+    setFormFile((prev) => ({
+      ...prev,
+      file,
+    }));
+
+  
+    let message: string = "";
+    try {
+      if (!isEditMode) {
+        // ✅ Gunakan langsung `file` dari input
+        const response = await saveFile(file).unwrap();
+        message = response?.message;
+  
+        setFormData((prev) => ({
+          ...prev,
+          file_id: response?.data?.file_id,
+        }));
+      } else {
+        const response = await updateFile({
+          id: selectMenuId,
+          module_name: "menu",
+          file, // ✅ Gunakan langsung `file` dari input
+        }).unwrap();
+        message = response?.message;
+      }
+  
+      onSuccess?.(message);
+    } catch (error: any) {
+      console.error("Error upload file", error);
+      toast.error(error?.data?.message ?? "Upload file gagal");
     }
   };
+  
+
+  const eventSubmitHandler = async () => {
+    const payload: I_MenuInput | any = formData;
+
+    if (payload?.file_id == null) {
+      delete payload?.file_id;
+    }
+
+    if (payload?.parent_id == null) {
+      delete payload?.parent_id;
+    }
+
+    try {
+      let message: string = "";
+      if (isEditMode) {
+        const response = await updateMenu({
+          menu_id: selectMenuId,
+          data: payload,
+        }).unwrap();
+        message = response?.message;
+      } else {
+        const response = await createMenu(payload).unwrap();
+        message = response?.message;
+      }
+
+      refetchData?.();
+      eventCloseModal()
+      onSuccess?.(message);
+    } catch (error: any) {
+      console.error("Error submit - update menu", error);
+      toast.error(error.data.message);
+    }
+  };
+
+  const eventDropdownChangeHandler = (value: string | number | null) => {
+    setFormData({
+      ...formData,
+      parent_id: value,
+    });
+  };
+
+  const eventCloseModal = () => {
+    resetModal();
+    closeModal();
+  }
+
+  if (!isOpen) return null;
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={closeModal}
+      onClose={() => eventCloseModal()}
       className="max-w-[500px] p-6 lg:p-8 rounded-lg shadow-2xl shadow-slate-950 border border-slate-300 bg-white dark:border-slate-950 dark:bg-gray-900"
     >
       <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
@@ -70,13 +232,13 @@ export function MenuModal({
             {isEditMode ? "Ubah Menu" : "Tambah Menu"}
           </h5>
         </div>
-
+filesApi
         {/* Frame Image & Upload Button */}
         <div className="flex flex-col  items-center mb-4">
           <div className="w-[120px] h-[120px] border border-gray-300 rounded-md flex items-center justify-center overflow-hidden">
-            {formFile.file ? (
+            {formFile?.previewUrl ? (
               <img
-                src={formFile.file}
+                src={formFile.previewUrl}
                 alt="Preview"
                 className="w-full h-full object-cover"
               />
@@ -91,7 +253,7 @@ export function MenuModal({
             <input
               type="file"
               accept="image/*"
-              onChange={handleImageUpload}
+              onChange={eventUploadFileHandler}
               className="block text-sm text-center mx-auto"
             />
           </div>
@@ -155,7 +317,7 @@ export function MenuModal({
             />
           </div>
 
-          {isEditMode && (
+          {(formData?.parent_id != null || isEditMode) && (
             <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
               <label
                 htmlFor="parent_id"
@@ -163,13 +325,12 @@ export function MenuModal({
               >
                 Parent ID
               </label>
-              <input
-                id="parent_id"
-                name="parent_id"
-                type="text"
+              <SearchableDropdown
                 value={formData.parent_id}
-                onChange={(e) => eventOnChangeInput(e)}
-                className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+                onChange={eventDropdownChangeHandler}
+                options={parentMenuOptions}
+                isLoading={isLoadingMenuList}
+                placeholder="Pilih Menu"
               />
             </div>
           )}
@@ -185,9 +346,16 @@ export function MenuModal({
           </button>
           <button
             type="button"
+            onClick={eventSubmitHandler}
             className="btn btn-success btn-update-event flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 sm:w-auto"
           >
-            {isEditMode ? "Ubah" : "Simpan"}
+            {isEditMode
+              ? isUpdating
+                ? "Menyimpan..."
+                : "Ubah"
+              : isCreating
+              ? "Menyimpan..."
+              : "Simpan"}
           </button>
         </div>
       </div>

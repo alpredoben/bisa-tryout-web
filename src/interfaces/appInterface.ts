@@ -26,3 +26,10 @@ export interface I_SidebarState {
   activeItem: string | null;
   openSubmenu: string | null;
 }
+
+
+export interface I_UpdateFilePayload {
+  id: string;
+  module_name: string;
+  file: File | any;
+}

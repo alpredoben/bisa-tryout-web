@@ -63,6 +63,7 @@ const Sidebar: React.FC = () => {
     (state) => state.auth.user?.list_access || []
   );
 
+
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
 

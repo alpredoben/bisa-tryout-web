@@ -11,6 +11,7 @@ import AdminLayout from "./layouts/admin/AdminLayout";
 import NotFoundPage from "./pages/NotFoundPage";
 import { RolePage } from "./pages/roles";
 import { PermissionPage } from "./pages/permissions";
+import { UserPage } from "./pages/users";
 
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import { useSelector } from "react-redux";
@@ -75,6 +76,13 @@ const App = () => {
               element={<PrivateRoute requiredPermission="read" />}
             >
               <Route index element={<PermissionPage />} />
+            </Route>
+
+            <Route
+              path="/master-user"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<UserPage />} />
             </Route>
 
           </Route>

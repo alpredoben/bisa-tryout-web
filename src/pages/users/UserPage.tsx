@@ -3,6 +3,7 @@ import { BreadCrumb } from "../../components/common/BreadCrumb";
 import { ComponentCard } from "../../components/common/ComponentCard";
 import { PageMeta } from "../../components/common/PageMeta";
 import { useFetchUsersQuery } from "../../services/userApi";
+import { useFetchRolesQuery } from "../../services/roleApi";
 import UserTable from "./UserTable";
 import { PlusIcon } from "../../assets/icons";
 import {UserModal} from "./UserModal";
@@ -46,6 +47,11 @@ const UserPage = () => {
     search,
   });
 
+  const {
+    data: roleResponse,
+  } = useFetchRolesQuery({ page: 1, limit: 100 });
+  const rolesData = roleResponse?.records ?? [];
+
   const eventEditHandler = async(permissionId: string) => {
     setSelectedUserId(permissionId)
     setIsEditMode(true);
@@ -65,13 +71,13 @@ const UserPage = () => {
   return (
     <>
       <PageMeta
-        title="Konfigurasi | Master Permission"
-        description="This is permission page in admin panel"
+        title="Konfigurasi | Master User"
+        description="This is user page in admin panel"
       />
 
-      <BreadCrumb pageTitle="Permissions" />
+      <BreadCrumb pageTitle="User" />
       <div className="space-y-6">
-        <ComponentCard title="Master Data Permission">
+        <ComponentCard title="Master Data User">
           {/* Top Controls */}
           <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
             {/* Limit Dropdown */}
@@ -150,6 +156,7 @@ const UserPage = () => {
         selectedUserId={selectedUserId}
         isEditMode={isEditMode}
         refetchTable={refetch}
+        roles={rolesData}
         onSuccess={(message: string) => {
           toast.success(message, { transition: Slide });
         }}

@@ -32,6 +32,9 @@ export const RestApi = {
     },
     Menu: {
       Fetch: '/menu'
+    },
+    FileStorage: {
+      Upload: '/files'
     }
   } 
 }

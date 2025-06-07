@@ -24,13 +24,17 @@ export const RestApi = {
       Delete: (id: string) => `/permissions/${id}`
     },
     Menu: {
-      Fetch: '/menu'
+      Fetch: '/menu',
+      FindById: (id: string) => `/menu/${id}`,
+      Create: `/menu`, 
+      Update: (id:string) => `/menu/${id}`,
+      Delete: (id: string) => `/menu/${id}`
     },
     Files: {
       SaveFile: '/files',
       GetFile: (fileName: string) => `/files/${fileName}`,
       DeleteFile: (fileName: string) => `/files/${fileName}`,
-      UpdateFile: (moduleName: string, id:string) => `/files/${moduleName}/${id}`
+      UpdateFile: (moduleName: string, id:string) => `/files/${moduleName}/${id}`,
     }
   } 
 }

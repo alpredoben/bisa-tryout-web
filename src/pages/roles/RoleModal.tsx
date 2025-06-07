@@ -55,7 +55,6 @@ export function RoleModal({
           role_id: selectedRoleId,
           data: payload,
         }).unwrap();
-        console.log({ RESPONSE: response });
         message = response?.message;
       } else {
         const response = await createRole(payload).unwrap();

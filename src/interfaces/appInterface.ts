@@ -31,5 +31,5 @@ export interface I_SidebarState {
 export interface I_UpdateFilePayload {
   id: string;
   module_name: string;
-  file: File;
+  file: File | any;
 }

@@ -43,8 +43,7 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await register(data).unwrap();
-      console.log({ RESPONSE_SUBMIT_REGISTER: response });
+      await register(data).unwrap();
       toast.success("Registrasi berhasil! Silakan login.");
       navigate("/login");
     } catch (error: any) {

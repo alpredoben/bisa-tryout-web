@@ -18,7 +18,7 @@ export const filesApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    saveFile: builder.mutation<any, File>({
+    saveFile: builder.mutation<any, any>({
       query: (file) => {
         const formData = new FormData();
         formData.append('file', file);
@@ -46,4 +46,4 @@ export const filesApi = createApi({
   })
 })
 
-export const { useSaveFileMutation } = filesApi;
+export const { useSaveFileMutation, useUpdateFileMutation } = filesApi;

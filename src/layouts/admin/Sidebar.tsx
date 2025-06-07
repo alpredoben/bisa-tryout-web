@@ -63,7 +63,6 @@ const Sidebar: React.FC = () => {
     (state) => state.auth.user?.list_access || []
   );
 
-  console.log({navItems})
 
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();

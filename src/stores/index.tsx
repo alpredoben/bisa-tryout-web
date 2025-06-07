@@ -7,6 +7,7 @@ import { authApi } from '../services/authApi';
 import { roleApi } from '../services/roleApi';
 import { menuApi } from '../services/menuApi';
 import { permissionApi } from '../services/permissionApi';
+import { filesApi } from '../services/fileApi';
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -18,6 +19,7 @@ export const store = configureStore({
       roleApi.middleware,
       menuApi.middleware,
       permissionApi.middleware,
+      filesApi.middleware
     ),
 });
 

@@ -10,10 +10,8 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
-      console.log("Window resized:", mobile);
       setIsMobile(mobile);
       if (!mobile && isMobile) {
-        console.log("Toggling mobile sidebar");
         toggleMobileSidebar();
       }
     };

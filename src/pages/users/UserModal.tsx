@@ -2,12 +2,19 @@
 import { useEffect, useState } from "react";
 import { Modal } from "../../components/ui/modal";
 import type { I_UserInput } from "../../interfaces/userInterface";
+import type { I_RoleFormatted } from "../../interfaces/roleInterface";
+
 import {
   useCreateUserMutation,
   useFindUserByIdQuery,
   useUpdateUserMutation,
 } from "../../services/userApi";
 import {toast } from "react-toastify";
+
+import {
+  useSaveFileMutation,
+  useUpdateFileMutation,
+} from "../../services/fileApi";
 
 interface I_UserModal {
   isOpen: boolean;
@@ -16,6 +23,7 @@ interface I_UserModal {
   selectedUserId?: string | null;
   refetchTable?: () => void;
   onSuccess?: (message: string) => void; 
+  roles: I_RoleFormatted[]; 
 }
 
 export function UserModal({
@@ -24,12 +32,13 @@ export function UserModal({
   isEditMode = false,
   selectedUserId = null,
   refetchTable,
-  onSuccess
+  onSuccess,
+  roles
 }: I_UserModal) {
   const [nameUser, setNameUser] = useState("");
   const [email, setEmail] = useState("");
-  const [photo, setPhoto] = useState("");
   const [phone, setPhone] = useState("");
+  const [selectedRoleId, setSelectedRoleId] = useState("");
 
   const {
     data: userData,
@@ -39,25 +48,57 @@ export function UserModal({
 
   const [createUser, { isLoading: isCreating }] = useCreateUserMutation();
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
+  
+  const [fileUrl, setFileUrl] = useState<string>("");
+  const [fileId, setFileId] = useState<string>("");
+  const [uploadPhoto, { isLoading: isUploading }] = useSaveFileMutation();
+  const [editPhoto, { isLoading: isUpdateUploading }] = useUpdateFileMutation();
+
+  const handleUploadPhoto = async (file: File) => {
+    try {
+      if (!isEditMode) {
+        const response= await uploadPhoto(file).unwrap();
+        setFileUrl(response.data.file_url);
+        setFileId(response.data.file_id);
+        toast.success("Foto berhasil di-upload!");
+      } else {
+        const response= await editPhoto({
+          id: selectedUserId,
+          module_name: "users",
+          file, // ✅ Gunakan langsung `file` dari input
+        }).unwrap();
+        setFileUrl(response.data.file_url);
+        setFileId(response.data.file_id);
+        toast.success("Foto berhasil update!");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Gagal mengunggah foto");
+    }
+  };
 
   useEffect(() => {
     if (isEditMode && userData) {
       setNameUser(userData.name || "");
       setEmail(userData.email || "");
-      setPhoto(userData.photo || "");
       setPhone(userData.phone || "");
+      setSelectedRoleId(userData.role.role_id || "");
+      setFileUrl(userData.photo?.file_url || "");
+      setFileId(userData.photo?.file_id || "");
     } else if (!isOpen) {
       setNameUser("");
       setEmail("");
-      setPhoto("");
       setPhone("");
+      setSelectedRoleId(""); 
+      setFileUrl("");
+      setFileId("");
     }
   }, [userData, isEditMode, isOpen]);
 
   if (!isOpen) return null;
 
   const handleSubmit = async () => {
-    const payload: I_UserInput = { name: nameUser, email: email, file: "photo", phone: phone, password: "password", role_id: "2554aa84-1a9f-4a09-8112-56b84b075e28"};
+    const payload: I_UserInput = { name: nameUser, email: email, file_id: fileId, phone: phone, password: "password", role_id: selectedRoleId};
 
     try {
       let message: string = '';
@@ -139,11 +180,28 @@ export function UserModal({
             <input
               id="photo"
               type="file"
-              value={photo}
-              onChange={(e) => setPhoto(e.target.value)}
+              onChange={(e) => {
+                const file = e.target.files?.[0] || undefined;
+                if (file) {
+                  handleUploadPhoto(file);
+                }
+              }}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
               placeholder="Masukkan photo user"
             />
+            {
+              isUploading ? "uploading..." : ""
+            }
+            {
+              isUpdateUploading ? "updating..." : ""
+            }
+            {fileUrl && (
+              <img
+                src={fileUrl}
+                alt="Preview"
+                className="w-32 h-32 object-cover rounded mt-2"
+              />
+            )}
           </div>
 
           <div className="mt-8 mb-4">
@@ -170,10 +228,20 @@ export function UserModal({
             >
               Role
             </label>
-            <select name="role_id" id="role_id" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary">
-              <option value="" selected>Select Role</option>
+            <select
+              name="role_id"
+              id="role_id"
+              value={selectedRoleId}
+              onChange={(e) => setSelectedRoleId(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+            >
+              <option value="">Pilih Role</option>
+              {roles.map((role: I_RoleFormatted) => (
+                <option key={role.role_id} value={role.role_id}>
+                  {role.role_name}
+                </option>
+              ))}
             </select>
-          
           </div>
 
           <div className="flex items-center gap-3 mt-6 modal-footer sm:justify-end">

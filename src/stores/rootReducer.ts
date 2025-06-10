@@ -11,6 +11,8 @@ import { menuApi } from '../services/menuApi';
 import { permissionApi } from '../services/permissionApi';
 import { filesApi } from '../services/fileApi';
 import { userApi } from '../services/userApi';
+import { categoryTryoutApi } from '../services/categoryTryoutApi';
+import { packageTryoutApi } from '../services/packageTryoutApi';
 
 const persistConfig = {
   key: 'root',
@@ -28,7 +30,9 @@ const rootReducer = combineReducers({
   [menuApi.reducerPath]: menuApi.reducer,
   [permissionApi.reducerPath]: permissionApi.reducer,
   [filesApi.reducerPath]: filesApi.reducer,
-  [userApi.reducerPath]: userApi.reducer
+  [userApi.reducerPath]: userApi.reducer,
+  [categoryTryoutApi.reducerPath]: categoryTryoutApi.reducer,
+  [packageTryoutApi.reducerPath]: packageTryoutApi.reducer
 });
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);

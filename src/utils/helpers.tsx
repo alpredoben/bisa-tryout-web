@@ -43,3 +43,12 @@ export const getListPermissions = (access: any[], path: string): any[] | null =>
 
   return menu?.access_permissions?.length > 0 ? menu.access_permissions.map((perm: any) => perm.permission.name) : [];
 }
+
+
+export const formatCurrency = (value: number, strFormat: string = 'id-ID', ): string => {
+  return new Intl.NumberFormat(strFormat, {
+    // style: "currency",
+    // currency: "IDR",
+    minimumFractionDigits: 2,
+  }).format(value);
+};

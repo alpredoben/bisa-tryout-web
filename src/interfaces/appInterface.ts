@@ -33,3 +33,61 @@ export interface I_UpdateFilePayload {
   module_name: string;
   file: File | any;
 }
+
+export interface I_ResponsePagination {
+  records: any[] | [];
+  next_page: number;
+  prev_page: number;
+  total_page: number;
+  total_row: number;
+  limit: number;
+  page: number; 
+}
+
+
+export interface I_ApiResponse {
+  records: any[] | [];
+  next_page: number;
+  prev_page: number;
+  total_page: number;
+  total_row: number;
+  limit: number;
+  page: number;
+
+}
+
+export interface I_TableProperties {
+  datatable: I_ApiResponse;
+  search?: string;
+  page: number;
+  setPage: (page: number) => void;
+  limit: number;
+  setLimit: (value: number) => void;
+  directionName: string;
+  orderName: "asc" | "desc";
+  setDirectionName: (value: string) => void;
+  setOrderName: (value: "asc" | "desc") => void;
+  onEdit: (data: any) => void;
+  onDelete?: (data: any) => void;
+  onSuccess?: (message: string) => void; 
+  onError?: (message: string) => void;
+  refetchTable?: () => void;
+  listPermissions: string[]
+}
+
+export interface I_TableHeaders {
+  id: number;
+  title: string;
+  name?:string;
+  className?: string;
+}
+
+export interface I_ModalProps {
+  isOpen: boolean;
+  closeModal: () => void;
+  isEditMode?: boolean;
+  selectedId?: string | null;
+  refetchData?: () =>void;
+  onSuccess?: (message: string) => void;
+  onError?: (message: string) => void;
+}

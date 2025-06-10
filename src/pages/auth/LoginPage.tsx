@@ -8,6 +8,8 @@ import * as yup from "yup";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { IconSvg } from "../../assets";
+import {Environment as Cfg} from '../../constants/environment'
+
 
 import {
   useLazyGetProfileQuery,
@@ -46,22 +48,33 @@ const LoginPage: React.FC = () => {
   const eventOnSubmit = async (data: LoginFormInputs) => {
     try {
       const response = await login({ ...data }).unwrap();
-      dispatch(setAuth({ token: response.data.access_token }));
+      const token = response?.data?.access_token;
 
-      // Panggil API getProfile setelah login berhasil dengan error handling
-      try {
-        const profileResponse = await triggerGetProfile().unwrap();
-        dispatch(setUserProfile({ user: profileResponse.data}));
-      } catch (profileError) {
-        console.error("Gagal mengambil profil:", profileError);
-        toast.error("Gagal mendapatkan data profil, coba lagi nanti.");
+      if(!token) {
+        throw new Error("Token tidak ditemukan dalam response")
       }
+
+
+      dispatch(setAuth({token}));
+      localStorage.setItem(`${Cfg.PrefixStorage}token`, token);
+
+      const profileResponse = await triggerGetProfile().unwrap();
+      
+      if(!profileResponse?.data) {
+        throw new Error("Data profil tidak ditemukan");
+      }
+
+      const user = profileResponse.data;
+      dispatch(setUserProfile({user}));
+
       toast.success("Login berhasil");
       navigate("/dashboard");
     } catch (err: any) {
+      console.error("Login error:", err);
       const message =
-        err?.data?.message ||
-        "Login gagal. Periksa kembali kredensial akun Anda.";
+      err?.data?.message ||
+      err?.message ||
+      "Login gagal. Periksa kembali kredensial akun Anda.";
       toast.error(message);
     }
   };

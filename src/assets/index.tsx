@@ -6,6 +6,7 @@ import LogoCPNS from './icon/tryout-cpns.png'
 import LogoUpCareer from './icon/carrer-up.png'
 import LogoBUMN from './icon/bumn-indo.png'
 
+
 export const IconSvg = {
   Login: LoginAccount,
   Register: RegisterAccount,
@@ -13,5 +14,5 @@ export const IconSvg = {
   ExamBro,
   LogoCPNS,
   LogoUpCareer,
-  LogoBUMN
+  LogoBUMN,
 }

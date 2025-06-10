@@ -1,6 +1,5 @@
 import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import type { I_AuthState, I_UserProfile } from '../interfaces/authInterface';
-import {Environment as Cfg} from '../constants/environment'
 
 const initialState: I_AuthState = {
   user: null,
@@ -19,7 +18,6 @@ const authSlice = createSlice({
       action: PayloadAction<{ token: string }>
     ) => {
       state.token = action.payload.token;
-      localStorage.setItem(`${Cfg.PrefixStorage}token`, action.payload.token);
     },
 
     setUserProfile: (
@@ -32,7 +30,6 @@ const authSlice = createSlice({
     clearAuth: (state) => {
       state.user = null;
       state.token = null;
-      localStorage.clear();
       state.grantedPermissions = [];
     },
 

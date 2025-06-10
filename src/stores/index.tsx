@@ -9,6 +9,8 @@ import { menuApi } from '../services/menuApi';
 import { permissionApi } from '../services/permissionApi';
 import { filesApi } from '../services/fileApi';
 import { userApi } from '../services/userApi';
+import { categoryTryoutApi } from '../services/categoryTryoutApi';
+import { packageTryoutApi } from '../services/packageTryoutApi';
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -21,7 +23,9 @@ export const store = configureStore({
       menuApi.middleware,
       permissionApi.middleware,
       filesApi.middleware,
-      userApi.middleware
+      userApi.middleware,
+      categoryTryoutApi.middleware,
+      packageTryoutApi.middleware
     ),
 });
 

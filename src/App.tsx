@@ -17,6 +17,7 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import { useSelector } from "react-redux";
 import type { RootState } from "./stores/rootReducer";
 import { MenuPage } from "./pages/menu";
+import { TryoutPackage } from "./pages/tryout-package";
 
 const App = () => {
    // Mengambil status autentikasi dari Redux store
@@ -37,7 +38,7 @@ const App = () => {
           draggable
           pauseOnHover
           theme="light"
-          className="!z-[99999]"
+          style={{ zIndex: 99999 }}
         />
         <Routes>
           {/* Public Routes */}
@@ -83,6 +84,13 @@ const App = () => {
               element={<PrivateRoute requiredPermission="read" />}
             >
               <Route index element={<UserPage />} />
+            </Route>
+
+            <Route
+              path="/tryout-packages"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<TryoutPackage />} />
             </Route>
 
           </Route>

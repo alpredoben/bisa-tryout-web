@@ -7,6 +7,12 @@ import { getListPermissions } from "../utils/helpers";
 import { useDispatch } from "react-redux";
 import { setGrantedPermissions } from "../features/authSlice";
 
+import {
+  selectToken,
+  selectUser,
+  selectGrantedPermissions
+} from '../stores/selectors'
+
 interface PrivateRouteProps {
   requiredPermission?: string;
 }
@@ -18,31 +24,34 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const auth = useAppSelector((state) => state.auth);
-
-  const menuAccess = auth?.user?.list_access || [];
-  const grantPermissions = auth?.grantedPermissions;
+  const token = useAppSelector(selectToken);
+  const user = useAppSelector(selectUser);
+  const grantedPermissions = useAppSelector(selectGrantedPermissions);
+  const menuAccess = useMemo(() => user?.list_access || [], [user]);
 
   const listPermissions = useMemo(() => {
     return getListPermissions(menuAccess, currentPath) || [];
   }, [menuAccess, currentPath]);
 
-  const isAuthenticated = auth?.token && auth?.user;
+
+
+  const isAuthenticated = Boolean(token && user);;
   const hasPermission = listPermissions.includes(requiredPermission);
 
-  // Check token login
-  if (!auth?.token || !auth?.user) {
+  useEffect(() => {
+    const isSameArray = (a: string[], b: string[]) =>
+      a.length === b.length && a.every((v, i) => v === b[i]);
+
+    if (!isSameArray(listPermissions, grantedPermissions || []))  {
+      dispatch(setGrantedPermissions(listPermissions));
+    }
+  }, [listPermissions, grantedPermissions, dispatch]);
+
+  if (!isAuthenticated) {
     return <Navigate to={`/login`} state={{ from: location }} replace />;
   }
 
-  // Selalu jalankan hook
-  useEffect(() => {
-    const isSame =
-      JSON.stringify(listPermissions) === JSON.stringify(grantPermissions);
-    if (!isSame) {
-      dispatch(setGrantedPermissions(listPermissions));
-    }
-  }, [listPermissions, grantPermissions, dispatch]);
+  
 
   // Setelah semua hook dipanggil, baru evaluasi
   if (!isAuthenticated) {
@@ -53,7 +62,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     return <Navigate to={"/403"} replace />;
   }
 
-  if (!hasPermission) {
+  if (listPermissions.length === 0 || !hasPermission)  {
     return <Navigate to={"/403"} replace />;
   }
 

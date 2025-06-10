@@ -42,6 +42,20 @@ export const RestApi = {
       GetFile: (fileName: string) => `/files/${fileName}`,
       DeleteFile: (fileName: string) => `/files/${fileName}`,
       UpdateFile: (moduleName: string, id:string) => `/files/${moduleName}/${id}`,
-    }
+    },
+    CategoryTryout: {
+      Fetch: '/tryout-categories',
+      FindById: (id: string) => `/tryout-categories/${id}`,
+      Create: `/tryout-categories`, 
+      Update: (id:string) => `/tryout-categories/${id}`,
+      Delete: (id: string) => `/tryout-categories/${id}`
+    },
+    PackageTryout: {
+      Fetch: '/tryout-packages',
+      FindById: (id: string) => `/tryout-packages/${id}`,
+      Create: `/tryout-packages`, 
+      Update: (id:string) => `/tryout-packages/${id}`,
+      Delete: (id: string) => `/tryout-packages/${id}`
+    },
   } 
 }

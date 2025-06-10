@@ -1,4 +1,4 @@
-import { formatDate } from "date-fns";
+
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -16,7 +16,7 @@ import type {
   I_TableHeaders,
   I_TableProperties,
 } from "../../interfaces/appInterface";
-import { formatCurrency } from "../../utils/helpers";
+import { formatCurrency, formatedDate } from "../../utils/helpers";
 
 const tableHeaders: I_TableHeaders[] = [
   {
@@ -71,6 +71,7 @@ export default function TryoutPackageTable({
   setOrderName,
   directionName,
   setDirectionName,
+  onRemove
 }: I_TableProperties) {
   const { records, total_page, total_row, limit } = datatable;
 
@@ -152,7 +153,9 @@ export default function TryoutPackageTable({
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {records.length > 0 ? (
                   records.map((record, index) => (
-                    <TableRow key={record.package_id || index} className={`${(index + 1) % 2 === 0 ? "bg-white": "bg-slate-200"}`}>
+                    <TableRow key={record.package_id || index} className={`${
+                      (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white" 
+                    }`}>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
                         {(page - 1) * limit + index + 1}
                       </TableCell>
@@ -170,7 +173,7 @@ export default function TryoutPackageTable({
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white">
                         {record?.created_at
-                          ? formatDate(
+                          ? formatedDate(
                               new Date(record.created_at),
                               "dd MMM yyyy"
                             )
@@ -187,7 +190,7 @@ export default function TryoutPackageTable({
                             </button>
                           )}
                           {listPermissions.includes("delete") && (
-                            <button className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm">
+                            <button onClick={() => onRemove(record)} className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm">
                               <TrashBinIcon />
                             </button>
                           )}

@@ -15,46 +15,23 @@ import {
   TrashBinIcon,
 } from "../../assets/icons";
 import { useDeleteRoleMutation } from "../../services/roleApi";
+import type {
+  I_TableHeaders,
+  I_TableProperties,
+} from "../../interfaces/appInterface";
+import { formatedDate } from "../../utils/helpers";
 
-interface ApiResponse {
-  records: any[] | [];
-  next_page: number;
-  prev_page: number;
-  total_page: number;
-  total_row: number;
-  limit: number;
-  page: number;
-}
-
-interface TableProps {
-  datatable: ApiResponse;
-  search?: string;
-  page: number;
-  setPage: (page: number) => void;
-  limit: number;
-  setLimit: (value: number) => void;
-  directionName: string;
-  orderName: "asc" | "desc";
-  setDirectionName: (value: string) => void;
-  setOrderName: (value: "asc" | "desc") => void;
-  onEdit: (data: any) => void;
-  onSuccess?: (message: string) => void; 
-  refetchTable?: () => void;
-  listPermissions: string[]
-}
-
-interface TableHeaders {
-  id: number;
-  title: string;
-  name?: string;
-}
-
-const tableHeaders: TableHeaders[] = [
-  { id: 1, title: "No" },
-  { id: 2, title: "Name", name: "role_name" },
-  { id: 3, title: "Slug", name: "role_slug" },
-  { id: 4, title: "Created At", name: "created_at" },
-  { id: 5, title: "Action" },
+const tableHeaders: I_TableHeaders[] = [
+  { id: 1, title: "No", className: "justify-center" },
+  { id: 2, title: "Name", name: "role_name", className: "justify-center" },
+  { id: 3, title: "Slug", name: "role_slug", className: "justify-center" },
+  {
+    id: 4,
+    title: "Created At",
+    name: "created_at",
+    className: "justify-center",
+  },
+  { id: 5, title: "Action", className: "justify-center" },
 ];
 
 export default function RoleTable({
@@ -66,28 +43,15 @@ export default function RoleTable({
   setDirectionName,
   setOrderName,
   onEdit,
+  onRemove,
+  onError,
   onSuccess,
   refetchTable,
-  listPermissions
-}: TableProps) {
+  listPermissions,
+}: I_TableProperties) {
   const { records, total_row, limit, total_page } = datatable;
 
-  const [deleteRole] = useDeleteRoleMutation();
-
-  const eventDeleteHandler = async (data: any): Promise<void> => {
-    if (window.confirm(`Apakah kamu yakin ingin menghapus role "${data.role_name}" ini?`)) {
-      try {
-        const response = await deleteRole(data.role_id).unwrap();
-        onSuccess?.(response?.message); 
-        refetchTable?.();
-      } catch (error) {
-        alert("Gagal menghapus role");
-        console.error(error);
-      }
-    }
-  };
-
-  const eventHandlerSort = (column: string | undefined) => {
+  const eventRowSortHandler = (column: string | undefined) => {
     if (!column) return;
     if (directionName === column) {
       setOrderName(orderName === "asc" ? "desc" : "asc");
@@ -120,12 +84,12 @@ export default function RoleTable({
 
   return (
     <>
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:bg-black dark:border-white/[0.05] dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
           <div className="min-w-[1102px]">
             <Table>
               {/* Table Header */}
-              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+              <TableHeader className="border border-gray-300 dark:border-white/[0.05]">
                 <TableRow>
                   {tableHeaders.map((item) => {
                     const isSortable = !!item.name;
@@ -134,24 +98,30 @@ export default function RoleTable({
                       <TableCell
                         key={item.id}
                         isHeader
-                        className={`px-3 py-3 font-medium text-emerald-900 text-theme-xs dark:text-emerald-700 size-14 cursor-pointer ${
-                          item.title === "No" ? "text-center" : "text-start"
-                        }`}
+                        className={`px-2 py-3 font-bold text-white text-theme-sm dark:text-white cursor-pointer bg-slate-800 border border-white`}
                         onClick={() =>
-                          isSortable && eventHandlerSort(item.name)
+                          isSortable && eventRowSortHandler(item.name)
                         }
                       >
-                        <div className="flex items-center gap-1">
-                          <span>{item.title}</span>
+                        <div
+                          className={`flex flex-row items-start py-0 px-0 ${item.className}`}
+                        >
+                          <div
+                            className={`${
+                              isSortable && isActive ? "basis-3/4" : "basis-4/4"
+                            }`}
+                          >
+                            {item.title.toUpperCase()}
+                          </div>
 
                           {isSortable && isActive && (
-                            <>
+                            <div className="basis-1/4">
                               {orderName === "asc" ? (
                                 <ArrowUpIcon />
                               ) : (
                                 <ArrowDownIcon />
                               )}
-                            </>
+                            </div>
                           )}
                         </div>
                       </TableCell>
@@ -164,33 +134,47 @@ export default function RoleTable({
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {records.length > 0 ? (
                   records.map((record, index) => (
-                    <TableRow key={record.role_id || index}>
-                      <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-slate-600 justify-center">
+                    <TableRow
+                      key={record.role_id || index}
+                      className={`${
+                        (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white" 
+                      }`}
+                    >
+                      <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
                         {(page - 1) * limit + index + 1}
                       </TableCell>
-                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-slate-600">
+                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-white">
                         {record.role_name}
                       </TableCell>
-                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-slate-600">
+                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-white">
                         {record.role_slug}
                       </TableCell>
-                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-slate-600">
-                        {record?.created_at ? format(new Date(record.created_at), "dd MMM yyyy"): ''}
+                      <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white">
+                        {record?.created_at
+                          ? formatedDate(
+                              new Date(record.created_at),
+                              "dd MMM yyyy"
+                            )
+                          : ""}
                       </TableCell>
-                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-slate-600">
-                        <div className="flex gap-2">
-                          {listPermissions.includes('update') && (<button
-                            onClick={() => onEdit(record.role_id)}
-                            className="p-2 text-white hover:text-gray-100 bg-yellow-500 hover:bg-yellow-400 rounded text-sm"
-                          >
-                            <PencilIcon />
-                          </button>)}
-                          {listPermissions.includes('delete') && (<button
-                            onClick={() => eventDeleteHandler(record)}
-                            className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm"
-                          >
-                            <TrashBinIcon />
-                          </button>)}
+                      <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white">
+                        <div className="flex justify-center gap-2">
+                          {listPermissions.includes("update") && (
+                            <button
+                              onClick={() => onEdit(record)}
+                              className="p-2 text-white hover:text-gray-100 bg-yellow-500 hover:bg-yellow-400 rounded text-sm"
+                            >
+                              <PencilIcon />
+                            </button>
+                          )}
+                          {listPermissions.includes("delete") && (
+                            <button
+                              onClick={() => onRemove(record)}
+                              className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm"
+                            >
+                              <TrashBinIcon />
+                            </button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -198,7 +182,7 @@ export default function RoleTable({
                 ) : (
                   <TableRow>
                     <TableCell
-                      className="px-4 py-3 text-gray-500 text-center justify-center text-theme-sm dark:text-gray-400"
+                      className="px-4 py-3 text-slate-600 dark:text-white text-center justify-center text-theme-sm "
                       colSpan={tableHeaders.length}
                     >
                       No data available.
@@ -212,15 +196,15 @@ export default function RoleTable({
 
         {/* Pagination */}
         <div className="flex justify-between items-center p-4 border-t border-gray-100 dark:border-white/[0.05]">
-          <div className="text-sm text-slate-600">
-            Total: <span className="font-medium">{total_row}</span> data
+          <div className="text-sm text-slate-600 dark:text-white">
+            Total Baris : <span className="font-medium">{total_row}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
-              className="px-3 py-1 rounded bg-gray-200 text-sm disabled:opacity-50"
+              className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-100 text-sm disabled:opacity-50"
             >
               Prev
             </button>

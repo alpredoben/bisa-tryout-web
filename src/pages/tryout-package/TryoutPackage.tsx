@@ -96,7 +96,7 @@ const TryoutPackage = () => {
         toast.success(response?.message);
         refetch?.();
       } catch (error: any) {
-        alert("Gagal menghapus role");
+        alert("Gagal menghapus paket tryout");
         console.error(error);
         toast.error(error?.message);
       }
@@ -124,9 +124,9 @@ const TryoutPackage = () => {
         description="This is master tryout package on admin panel"
       />
 
-      <BreadCrumb pageTitle="Paket Tryout" />
+      <BreadCrumb pageTitle="PAKET TRYOUT" />
       <div className="space-y-6">
-        <ComponentCard title="Master Paket Tryout">
+        <ComponentCard title="MASTER DATA PAKET TRYOUT">
           {/* Top Controls */}
           <div className="flex flex-wrap items-center gap-4 w-full sm:flex-nowrap mt-10">
             {/* Limit Dropdown */}
@@ -194,7 +194,7 @@ const TryoutPackage = () => {
                     </div>
 
                     <div className="basis-1/3 mt-1">
-                      <button
+                      {listPermissions.includes('created') ? (<button
                         onClick={openModal}
                         className="bg-blue-500 w-full hover:bg-blue-700 text-white px-4 py-2.5 rounded text-sm whitespace-nowrap"
                       >
@@ -203,7 +203,7 @@ const TryoutPackage = () => {
                           <span>Tambah</span>
                         </div>
                         
-                      </button>
+                      </button>): (<span>&nbsp;</span>)}
                     </div>
 
                     <div className="basis-1/3 mt-1">
@@ -261,7 +261,7 @@ const TryoutPackage = () => {
               setOrderName={setOrderName}
               setDirectionName={setDirectionName}
               onEdit={eventEditHandler}
-              onDelete={eventDeleteHandler}
+              onRemove={eventDeleteHandler}
               onSuccess={(message: string) => {
                 toast.success(message, { transition: Slide });
               }}

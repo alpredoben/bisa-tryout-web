@@ -68,7 +68,7 @@ export interface I_TableProperties {
   setDirectionName: (value: string) => void;
   setOrderName: (value: "asc" | "desc") => void;
   onEdit: (data: any) => void;
-  onDelete?: (data: any) => void;
+  onRemove: (data: any) => void;
   onSuccess?: (message: string) => void; 
   onError?: (message: string) => void;
   refetchTable?: () => void;

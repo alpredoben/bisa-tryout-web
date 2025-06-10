@@ -58,7 +58,7 @@ const TryoutPackage = () => {
   } = useFetchPackagesQuery({
     page,
     limit,
-    category_id: selectedCategory?.category_id || '',
+    category_id: selectedCategory?.category_id || "",
     direction_name: directionName,
     order_name: orderName,
     search: searchText,
@@ -77,13 +77,13 @@ const TryoutPackage = () => {
   };
 
   const eventSelectCategoryHandler = (value: any) => {
-    setSelectedCategory({ 
+    setSelectedCategory({
       ...selectedCategory,
       category_id: value?.category_id,
-      name: value?.name
-     });
+      name: value?.name,
+    });
     setPage(1);
-  }
+  };
 
   const eventDeleteHandler = async (data: any): Promise<void> => {
     if (
@@ -104,7 +104,7 @@ const TryoutPackage = () => {
   };
 
   const eventSearchHandler = () => {
-    setSearchText(searchTextTemp); 
+    setSearchText(searchTextTemp);
     setPage(1);
   };
 
@@ -114,7 +114,7 @@ const TryoutPackage = () => {
   };
 
   const eventSearchChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTextTemp(e.target.value); 
+    setSearchTextTemp(e.target.value);
   };
 
   return (
@@ -130,7 +130,7 @@ const TryoutPackage = () => {
           {/* Top Controls */}
           <div className="flex flex-wrap items-center gap-4 w-full sm:flex-nowrap mt-10">
             {/* Limit Dropdown */}
-            <div className="min-w-24">
+            <div className="min-w-16 max-w-sm">
               <label className="block -mt-5 mb-1 text-sm font-medium text-gray-700">
                 Limit
               </label>
@@ -146,6 +146,8 @@ const TryoutPackage = () => {
                 ))}
               </select>
             </div>
+
+            <div className="min-w-14 max-w-sm">&nbsp;</div>
 
             {/* Category Dropdown */}
 
@@ -165,63 +167,76 @@ const TryoutPackage = () => {
 
                 {/* Search Input */}
                 <div className="basis-2/5">
-                  <label className="block -mt-5 mb-1 text-sm font-medium text-gray-700">
-                    Pencarian
-                  </label>
-                  <input
-                    type="text"
-                    value={searchTextTemp}
-                    onChange={eventSearchChangeHandler}
-                    placeholder="Cari Nama/Kategori/Keterangan..."
-                    className="px-3 py-2 border border-gray-300 rounded text-sm w-full focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
+                  <div className="w-full">
+                    <label className="block -mt-5 mb-1 text-sm font-medium text-gray-700">
+                      Pencarian
+                    </label>
+                    <input
+                      type="text"
+                      value={searchTextTemp}
+                      onChange={eventSearchChangeHandler}
+                      placeholder="Cari Nama/Kategori/Keterangan..."
+                      className="px-3 py-2 border border-gray-300 rounded text-sm w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
                 </div>
 
                 {/* Buttons */}
-                <div className="basis-1/4 flex gap-4">
-                  <button
-                    onClick={eventSearchHandler}
-                    className="bg-slate-500 hover:bg-slate-700 text-white px-4 py-2 rounded text-sm"
-                  >
-                    Search
-                  </button>
+                <div className="basis-1/4">
+                  <div className="w-full flex flex-row gap-3">
+                    <div className="basis-1/3 mt-1">
+                      <button
+                        onClick={eventSearchHandler}
+                        className="bg-slate-500 w-full hover:bg-slate-700 text-white px-4 py-2.5 gap-2 rounded text-sm"
+                      >
+                        Search
+                      </button>
+                    </div>
 
-                  <button
-                    onClick={openModal}
-                    className="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm whitespace-nowrap"
-                  >
-                    <PlusIcon />
-                    <span>Tambah</span>
-                  </button>
+                    <div className="basis-1/3 mt-1">
+                      <button
+                        onClick={openModal}
+                        className="bg-blue-500 w-full hover:bg-blue-700 text-white px-4 py-2.5 rounded text-sm whitespace-nowrap"
+                      >
+                        <div className="flex flex-row gap-1">
+                          <span className="py-0.5"><PlusIcon /></span>
+                          <span>Tambah</span>
+                        </div>
+                        
+                      </button>
+                    </div>
 
-                  <Menu>
-                    <MenuButton className="flex items-center gap-2 bg-emerald-800 text-white px-4 py-2 rounded text-sm whitespace-nowrap">
-                      Action <ChevronDownIcon />
-                    </MenuButton>
-                    <MenuItems
-                      anchor="bottom"
-                      className="mt-2 bg-white border border-slate-300 shadow-lg w-48"
-                    >
-                      {["Import", "Export", "Riwayat"].map((item) => (
-                        <MenuItem key={item}>
-                          {({ active }) => (
-                            <button
-                              className={`w-full text-left px-4 py-2 text-sm font-medium rounded ${
-                                active
-                                  ? "bg-emerald-400 hover:bg-emerald-700 text-white"
-                                  : "bg-white text-emerald-800"
-                              }`}
-                              onClick={() =>
-                                (window.location.href = "/settings")
-                              }
-                            >
-                              {item}
-                            </button>
-                          )}
-                        </MenuItem>
-                      ))}
-                    </MenuItems>
-                  </Menu>
+                    <div className="basis-1/3 mt-1">
+                      <Menu>
+                        <MenuButton className="w-full flex items-center gap-2 bg-emerald-800 text-white px-4 py-2.5 rounded text-sm whitespace-nowrap">
+                          Action <ChevronDownIcon />
+                        </MenuButton>
+                        <MenuItems
+                          anchor="bottom"
+                          className="mt-2 bg-white border border-slate-300 shadow-lg w-48"
+                        >
+                          {["Import", "Export", "Riwayat"].map((item) => (
+                            <MenuItem key={item}>
+                              {({ active }) => (
+                                <button
+                                  className={`w-full text-left px-4 py-2 text-sm font-medium rounded ${
+                                    active
+                                      ? "bg-emerald-400 hover:bg-emerald-700 text-white"
+                                      : "bg-white text-emerald-800"
+                                  }`}
+                                  onClick={() =>
+                                    (window.location.href = "/settings")
+                                  }
+                                >
+                                  {item}
+                                </button>
+                              )}
+                            </MenuItem>
+                          ))}
+                        </MenuItems>
+                      </Menu>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

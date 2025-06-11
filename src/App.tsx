@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "./stores/rootReducer";
 import { MenuPage } from "./pages/menu";
 import { TryoutPackage } from "./pages/tryout-package";
+import { CategoryTryoutPage } from "./pages/category-tryout";
 
 const App = () => {
    // Mengambil status autentikasi dari Redux store
@@ -84,6 +85,13 @@ const App = () => {
               element={<PrivateRoute requiredPermission="read" />}
             >
               <Route index element={<UserPage />} />
+            </Route>
+
+            <Route
+              path="/tryout-categories"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<CategoryTryoutPage />} />
             </Route>
 
             <Route

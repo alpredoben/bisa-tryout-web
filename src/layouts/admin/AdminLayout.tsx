@@ -22,7 +22,11 @@ const LayoutContent: React.FC = () => {
         <Backdrop />
       </div>
 
-      <div className={`flex-1 transition-all duration-300 ease-in-out ${isExpanded || isHovered ? "lg:ml-[290px]": "lg:ml-[90px]"} ${isMobileOpen ? "ml-0" : ""}`}>
+      <div
+        className={`flex-1 transition-all duration-300 ease-in-out ${
+          isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
+        } ${isMobileOpen ? "ml-0" : ""}`}
+      >
         {/* AppHeader */}
         <AppHeader />
 
@@ -36,7 +40,7 @@ const LayoutContent: React.FC = () => {
 }
 
 
-export default function AppLayout() {
+export default function AdminLayout() {
   return (
     <SidebarProvider>
       <LayoutContent />

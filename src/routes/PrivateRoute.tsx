@@ -4,7 +4,6 @@ import React, { useEffect, useMemo } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAppSelector } from "../stores/hooks";
 import { getListPermissions } from "../utils/helpers";
-import { useDispatch } from "react-redux";
 import { setGrantedPermissions } from "../features/authSlice";
 
 import {
@@ -12,6 +11,7 @@ import {
   selectUser,
   selectGrantedPermissions
 } from '../stores/selectors'
+import { useAppDispatch } from "../stores";
 
 interface PrivateRouteProps {
   requiredPermission?: string;
@@ -20,7 +20,7 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({
   requiredPermission = "read",
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -35,7 +35,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
 
 
 
-  const isAuthenticated = Boolean(token && user);;
+  const isAuthenticated = Boolean(token && user);
   const hasPermission = listPermissions.includes(requiredPermission);
 
   useEffect(() => {
@@ -47,19 +47,10 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     }
   }, [listPermissions, grantedPermissions, dispatch]);
 
-  if (!isAuthenticated) {
-    return <Navigate to={`/login`} state={{ from: location }} replace />;
-  }
-
-  
 
   // Setelah semua hook dipanggil, baru evaluasi
   if (!isAuthenticated) {
     return <Navigate to={`/login`} state={{ from: location }} replace />;
-  }
-
-  if (listPermissions.length === 0) {
-    return <Navigate to={"/403"} replace />;
   }
 
   if (listPermissions.length === 0 || !hasPermission)  {

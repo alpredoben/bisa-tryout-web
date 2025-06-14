@@ -6,8 +6,14 @@ import { useSidebar } from "../../hooks/useSidebar";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useAppSelector } from "../../stores/hooks";
-import { BoxCubeIcon, ChevronDownIcon, HorizontaLDots, PieChartIcon } from "../../assets/icons";
+import {
+  BoxCubeIcon,
+  ChevronDownIcon,
+  HorizontaLDots,
+  PieChartIcon,
+} from "../../assets/icons";
 import type { NavigationItem } from "../../interfaces/appInterface";
+import { selectUserListAccess } from "../../stores/selectors";
 
 const othersItems: NavigationItem[] = [
   {
@@ -24,45 +30,74 @@ const othersItems: NavigationItem[] = [
         menu_slug: "/line-chart",
         menu_icon: null,
         menu_order_number: 1,
-        childrens: []
+        childrens: [],
       },
       {
         menu_name: "Bar Chart",
         menu_slug: "/bar-chart",
         menu_icon: null,
         menu_order_number: 2,
-        childrens: []
+        childrens: [],
       },
     ],
   },
   {
-    menu_name: 'UI Elements',
-    menu_slug: '/ui-elements',
+    menu_name: "UI Elements",
+    menu_slug: "/ui-elements",
     menu_icon: {
-      type: 'icon',
-      value: <BoxCubeIcon />
+      type: "icon",
+      value: <BoxCubeIcon />,
     },
     menu_order_number: 2,
     childrens: [
-      { menu_name: "Alerts", menu_slug: "/alerts", menu_icon: null, menu_order_number: 1, childrens: [] },
-      { menu_name: "Avatar", menu_slug: "/avatars", menu_icon: null, menu_order_number: 2, childrens: [] },
-      { menu_name: "Badge", menu_slug: "/badge", menu_icon: null , menu_order_number: 3, childrens: [] },
-      { menu_name: "Buttons", menu_slug: "/buttons", menu_icon: null, menu_order_number: 4, childrens: [] },
-      { menu_name: "Images", menu_slug: "/images", menu_icon: null, menu_order_number: 5, childrens: [] },
-      { menu_name: "Videos", 
-        menu_slug: "/videos", 
-        menu_icon: null, 
-        menu_order_number: 6, 
-        childrens: [] }
+      {
+        menu_name: "Alerts",
+        menu_slug: "/alerts",
+        menu_icon: null,
+        menu_order_number: 1,
+        childrens: [],
+      },
+      {
+        menu_name: "Avatar",
+        menu_slug: "/avatars",
+        menu_icon: null,
+        menu_order_number: 2,
+        childrens: [],
+      },
+      {
+        menu_name: "Badge",
+        menu_slug: "/badge",
+        menu_icon: null,
+        menu_order_number: 3,
+        childrens: [],
+      },
+      {
+        menu_name: "Buttons",
+        menu_slug: "/buttons",
+        menu_icon: null,
+        menu_order_number: 4,
+        childrens: [],
+      },
+      {
+        menu_name: "Images",
+        menu_slug: "/images",
+        menu_icon: null,
+        menu_order_number: 5,
+        childrens: [],
+      },
+      {
+        menu_name: "Videos",
+        menu_slug: "/videos",
+        menu_icon: null,
+        menu_order_number: 6,
+        childrens: [],
+      },
     ],
-  }
+  },
 ];
 
 const Sidebar: React.FC = () => {
-  const navItems: NavigationItem[] = useAppSelector(
-    (state) => state.auth.user?.list_access || []
-  );
-
+  const navItems: NavigationItem[] = useAppSelector(selectUserListAccess);
 
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
@@ -89,26 +124,23 @@ const Sidebar: React.FC = () => {
       const items = menuType === "main" ? navItems : othersItems;
 
       items.forEach((nav: any, index: any) => {
-        
-        if(nav?.childrens && nav?.childrens?.length > 0) {
-          nav?.childrens?.forEach((ch: any) => {
-            if(isActive(ch.menu_slug)) {
+        if (nav?.childrens && nav?.childrens?.length > 0) {
+          nav.childrens.forEach((ch: any) => {
+            if (isActive(ch.menu_slug)) {
               setOpenSubmenu({
                 type: menuType as "main" | "others",
                 index,
-              })
-              submenuMatched = true
+              });
+              submenuMatched = true;
             }
-          })
-        } else {
-          if(isActive(nav.menu_slug)) {
-            setOpenSubmenu({
-              type: menuType as "main" | "others",
-              index,
-            })
-            submenuMatched = true
-          }
-        }        
+          });
+        } else if (isActive(nav.menu_slug)) {
+          setOpenSubmenu({
+            type: menuType as "main" | "others",
+            index,
+          });
+          submenuMatched = true;
+        }
       });
     });
 
@@ -127,8 +159,7 @@ const Sidebar: React.FC = () => {
         }));
       }
     }
-  }, [openSubmenu])
-
+  }, [openSubmenu]);
 
   const handleSubmenuToggle = (index: number, menuType: "main" | "others") => {
     setOpenSubmenu((prevOpenSubmenu) => {
@@ -143,24 +174,27 @@ const Sidebar: React.FC = () => {
     });
   };
 
-
-  const getIcon = (icon: {type: string; value: any | null} | null): any | null => {
-    if(icon && icon?.type) {
+  const getIcon = (
+    icon: { type: string; value: any | null } | null
+  ): any | null => {
+    if (icon && icon?.type) {
       switch (icon.type) {
-        case 'icon':
-          return icon.value
-        case 'file':
+        case "icon":
+          return icon.value;
+        case "file":
           return icon.value.file_path;
         default:
-          return null
+          return null;
       }
     }
 
-    return null
-  }
+    return null;
+  };
 
-
-  const renderMenuItems = (items: NavigationItem[], menuType: "main" | "others") => (
+  const renderMenuItems = (
+    items: NavigationItem[],
+    menuType: "main" | "others"
+  ) => (
     <ul className="flex flex-col gap-4">
       {items.map((nav, index) => (
         <li key={nav.menu_name}>
@@ -177,7 +211,7 @@ const Sidebar: React.FC = () => {
                   : "lg:justify-start"
               }`}
             >
-              <span
+              {/* <span
                 className={`menu-item-icon-size  ${
                   openSubmenu?.type === menuType && openSubmenu?.index === index
                     ? "menu-item-icon-active"
@@ -185,7 +219,7 @@ const Sidebar: React.FC = () => {
                 }`}
               >
                 {getIcon(nav.menu_icon)}
-              </span>
+              </span> */}
               {(isExpanded || isHovered || isMobileOpen) && (
                 <span className="menu-item-text">{nav.menu_name}</span>
               )}
@@ -205,10 +239,12 @@ const Sidebar: React.FC = () => {
               <Link
                 to={nav.menu_slug}
                 className={`menu-item group ${
-                  isActive(nav.menu_slug) ? "menu-item-active" : "menu-item-inactive"
+                  isActive(nav.menu_slug)
+                    ? "menu-item-active"
+                    : "menu-item-inactive"
                 }`}
               >
-                <span
+                {/* <span
                   className={`menu-item-icon-size ${
                     isActive(nav.menu_slug)
                       ? "menu-item-icon-active"
@@ -216,7 +252,7 @@ const Sidebar: React.FC = () => {
                   }`}
                 >
                   {getIcon(nav.menu_icon)}
-                </span>
+                </span> */}
                 {(isExpanded || isHovered || isMobileOpen) && (
                   <span className="menu-item-text">{nav.menu_name}</span>
                 )}
@@ -224,42 +260,43 @@ const Sidebar: React.FC = () => {
             )
           )}
 
-          {nav?.childrens?.length > 0 && (isExpanded || isHovered || isMobileOpen) && (
-            <div
-              ref={(el) => {
-                subMenuRefs.current[`${menuType}-${index}`] = el;
-              }}
-              className="overflow-hidden transition-all duration-300"
-              style={{
-                height:
-                  openSubmenu?.type === menuType && openSubmenu?.index === index
-                    ? `${subMenuHeight[`${menuType}-${index}`]}px`
-                    : "0px",
-              }}
-            >
-              <ul className="mt-2 space-y-1 ml-9">
-                {nav?.childrens?.map((subItem) => (
-                  <li key={subItem.menu_name}>
-                    <Link
-                      to={subItem.menu_slug}
-                      className={`menu-dropdown-item ${
-                        isActive(subItem.menu_slug)
-                          ? "menu-dropdown-item-active"
-                          : "menu-dropdown-item-inactive"
-                      }`}
-                    >
-                      {subItem.menu_name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {nav?.childrens?.length > 0 &&
+            (isExpanded || isHovered || isMobileOpen) && (
+              <div
+                ref={(el) => {
+                  subMenuRefs.current[`${menuType}-${index}`] = el;
+                }}
+                className="overflow-hidden transition-all duration-300"
+                style={{
+                  height:
+                    openSubmenu?.type === menuType &&
+                    openSubmenu?.index === index
+                      ? `${subMenuHeight[`${menuType}-${index}`]}px`
+                      : "0px",
+                }}
+              >
+                <ul className="mt-2 space-y-1 ml-9">
+                  {nav?.childrens?.map((subItem) => (
+                    <li key={subItem.menu_name}>
+                      <Link
+                        to={subItem.menu_slug}
+                        className={`menu-dropdown-item ${
+                          isActive(subItem.menu_slug)
+                            ? "menu-dropdown-item-active"
+                            : "menu-dropdown-item-inactive"
+                        }`}
+                      >
+                        {subItem.menu_name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
         </li>
       ))}
     </ul>
   );
-
 
   return (
     <aside

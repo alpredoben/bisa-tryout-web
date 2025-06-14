@@ -1,11 +1,11 @@
-interface ComponentCardProps {
+interface I_ComponentCardProps {
   title: string;
   children: React.ReactNode;
   className?: string; // Additional custom classes for styling
   desc?: string; // Description text
 }
 
-export const ComponentCard: React.FC<ComponentCardProps> = ({
+export const ComponentCard: React.FC<I_ComponentCardProps> = ({
   title,
   children,
   className = "",

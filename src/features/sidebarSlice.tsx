@@ -8,7 +8,8 @@ const initialState: I_SidebarState = {
   isMobileOpen: true,
   isHovered: true,
   activeItem: null,
-  openSubmenu: null
+  openSubmenu: null,
+  isMobile: typeof window !== "undefined" ? window.innerWidth < 768 : false,
 }
 
 const sidebarSlice = createSlice({
@@ -30,6 +31,12 @@ const sidebarSlice = createSlice({
     toggleSubmenu(state, action: PayloadAction<string>) {
       state.openSubmenu = state.openSubmenu === action.payload ? null : action.payload;
     },
+    setIsMobile: (state, action: PayloadAction<boolean>) => {
+      state.isMobile = action.payload;
+      if (!action.payload) {
+        state.isMobileOpen = false;
+      }
+    },
   }
 });
 
@@ -39,6 +46,7 @@ export const {
   setIsHovered,
   setActiveItem,
   toggleSubmenu,
+  setIsMobile
 } = sidebarSlice.actions;
 
 

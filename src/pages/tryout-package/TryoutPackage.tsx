@@ -20,6 +20,12 @@ import { TryoutPackageModal } from "./TryoutPackageModal";
 
 const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100];
 
+const LIST_BUTTONS = [
+  { name: "import", label: "Import" },
+  { name: "download", label: "Download" },
+  { name: "report", label: "Riwayat" },
+];
+
 const TryoutPackage = () => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
@@ -40,6 +46,7 @@ const TryoutPackage = () => {
   const listPermissions = useAppSelector(selectGrantedPermissions);
 
   const [deletePackage] = useDeletePackageMutation();
+  const [typeName, setTypeName] = useState(null)
 
   const {
     data = {
@@ -117,6 +124,22 @@ const TryoutPackage = () => {
     setSearchTextTemp(e.target.value);
   };
 
+  const eventAddHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTypeName(null)
+    openModal()
+  }
+
+  const eventButtonDropdownHandler = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    item: any
+  ) => {
+    e.preventDefault();
+    setTypeName((prev: any) => item.name)
+    if(item.name === 'import') {
+      openModal()
+    }
+  };
+
   return (
     <>
       <PageMeta
@@ -153,7 +176,7 @@ const TryoutPackage = () => {
 
             <div className="min-w-full">
               <div className="flex flex-wrap items-center gap-4 w-full sm:flex-nowrap">
-                <div className="basis-1/5">
+                <div className="w-full">
                   <div className="w-full">
                     <label className="block -mt-5 mb-1 text-sm font-medium text-gray-700">
                       Kategori Tryout
@@ -166,7 +189,7 @@ const TryoutPackage = () => {
                 </div>
 
                 {/* Search Input */}
-                <div className="basis-2/5">
+                <div className="w-full">
                   <div className="w-full">
                     <label className="block -mt-5 mb-1 text-sm font-medium text-gray-700">
                       Pencarian
@@ -182,9 +205,9 @@ const TryoutPackage = () => {
                 </div>
 
                 {/* Buttons */}
-                <div className="basis-1/4">
-                  <div className="w-full flex flex-row gap-3">
-                    <div className="basis-1/3 mt-1">
+                <div className="w-full">
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="w-full sm:w-auto mt-1">
                       <button
                         onClick={eventSearchHandler}
                         className="bg-slate-500 w-full hover:bg-slate-700 text-white px-4 py-2.5 gap-2 rounded text-sm"
@@ -193,20 +216,25 @@ const TryoutPackage = () => {
                       </button>
                     </div>
 
-                    <div className="basis-1/3 mt-1">
-                      {listPermissions.includes('created') ? (<button
-                        onClick={openModal}
-                        className="bg-blue-500 w-full hover:bg-blue-700 text-white px-4 py-2.5 rounded text-sm whitespace-nowrap"
-                      >
-                        <div className="flex flex-row gap-1">
-                          <span className="py-0.5"><PlusIcon /></span>
-                          <span>Tambah</span>
-                        </div>
-                        
-                      </button>): (<span>&nbsp;</span>)}
+                    <div className="w-full sm:w-auto mt-1">
+                      {listPermissions.includes("create") ? (
+                        <button
+                          onClick={(e:any) => eventAddHandler(e)}
+                          className="bg-blue-500 w-full hover:bg-blue-700 text-white px-4 py-2.5 rounded text-sm whitespace-nowrap"
+                        >
+                          <div className="flex flex-row gap-1">
+                            <span className="py-0.5">
+                              <PlusIcon />
+                            </span>
+                            <span>Tambah</span>
+                          </div>
+                        </button>
+                      ) : (
+                        <span>&nbsp;</span>
+                      )}
                     </div>
 
-                    <div className="basis-1/3 mt-1">
+                    <div className="w-full sm:w-auto mt-1">
                       <Menu>
                         <MenuButton className="w-full flex items-center gap-2 bg-emerald-800 text-white px-4 py-2.5 rounded text-sm whitespace-nowrap">
                           Action <ChevronDownIcon />
@@ -215,24 +243,28 @@ const TryoutPackage = () => {
                           anchor="bottom"
                           className="mt-2 bg-white border border-slate-300 shadow-lg w-48"
                         >
-                          {["Import", "Export", "Riwayat"].map((item) => (
-                            <MenuItem key={item}>
-                              {({ active }) => (
-                                <button
-                                  className={`w-full text-left px-4 py-2 text-sm font-medium rounded ${
-                                    active
-                                      ? "bg-emerald-400 hover:bg-emerald-700 text-white"
-                                      : "bg-white text-emerald-800"
-                                  }`}
-                                  onClick={() =>
-                                    (window.location.href = "/settings")
-                                  }
-                                >
-                                  {item}
-                                </button>
-                              )}
-                            </MenuItem>
-                          ))}
+                          {LIST_BUTTONS?.length > 0 &&
+                            LIST_BUTTONS.map(
+                              (item) =>
+                                listPermissions.includes(item.name) && (
+                                  <MenuItem key={item.name}>
+                                    {({ active }) => (
+                                      <button
+                                        className={`w-full text-left px-4 py-2 text-sm font-medium rounded ${
+                                          active
+                                            ? "bg-emerald-400 hover:bg-emerald-700 text-white"
+                                            : "bg-white text-emerald-800"
+                                        }`}
+                                        onClick={(e: any) =>
+                                          eventButtonDropdownHandler(e, item)
+                                        }
+                                      >
+                                        {item.label}
+                                      </button>
+                                    )}
+                                  </MenuItem>
+                                )
+                            )}
                         </MenuItems>
                       </Menu>
                     </div>
@@ -292,6 +324,7 @@ const TryoutPackage = () => {
         onError={(message: string) => {
           toast.success(message, { transition: Slide });
         }}
+        typeName={typeName}
       />
     </>
   );

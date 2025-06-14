@@ -25,6 +25,7 @@ export interface I_SidebarState {
   isHovered: boolean;
   activeItem: string | null;
   openSubmenu: string | null;
+  isMobile: boolean
 }
 
 
@@ -90,4 +91,5 @@ export interface I_ModalProps {
   refetchData?: () =>void;
   onSuccess?: (message: string) => void;
   onError?: (message: string) => void;
+  typeName?: any | null
 }

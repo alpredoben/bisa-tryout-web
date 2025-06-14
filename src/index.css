@@ -4,8 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 @layer base {
   body {
     @apply relative text-base font-normal z-1 bg-gray-50 font-outfit;
@@ -575,9 +573,4 @@ span.flatpickr-weekday,
 
 .simplebar-scrollbar.simplebar-visible:before {
   @apply opacity-100;
-}
-
-
-.input-form {
-  @apply w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-500;
 }

@@ -74,6 +74,30 @@ export const packageTryoutApi = createApi({
       }),
       invalidatesTags: (_result, _error, id) => [{ type: TAG_NAME, id }],
     }),
+
+    downloadTemplate: builder.query<Blob, void>({
+      query: () => ({
+        url: RestApi.Endpoint.PackageTryout.DownloadTemplate,
+        method: "GET",
+        headers: {
+          Accept: "application/octet-stream",
+        },
+        responseHandler: (response) => response.blob(),
+      }),
+    }),
+
+    importFile: builder.mutation<any, any>({
+      query: (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return {
+          url: RestApi.Endpoint.PackageTryout.ImportFile,
+          method: 'POST',
+          body: formData
+        }
+      }
+    }),
   }),
 });
 
@@ -82,5 +106,6 @@ export const {
   useCreatePackageMutation,
   useUpdatePackageMutation,
   useFindPackageByIdQuery,
-  useDeletePackageMutation
+  useDeletePackageMutation,
+  useImportFileMutation
 } = packageTryoutApi;

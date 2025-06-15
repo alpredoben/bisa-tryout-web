@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // File: src/pages/auth/Login.tsx
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -20,6 +21,8 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Footer, TopNavbar } from "../../layouts/landing";
 
+import {FullScreenLoader} from "../../components/common/FullScreenLoader";
+
 const loginSchema = yup.object({
   email: yup.string().email("Email tidak valid").required("Email wajib diisi"),
   password: yup
@@ -37,6 +40,8 @@ const LoginPage: React.FC = () => {
   const [login, { isLoading }] = useLoginMutation();
   const [triggerGetProfile] = useLazyGetProfileQuery();
 
+  const [loadingPage, setLoadingPage] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -47,37 +52,43 @@ const LoginPage: React.FC = () => {
 
   const eventOnSubmit = async (data: LoginFormInputs) => {
     try {
+      setLoadingPage(true);
+  
       const response = await login({ ...data }).unwrap();
       const token = response?.data?.access_token;
-
-      if(!token) {
-        throw new Error("Token tidak ditemukan dalam response")
+  
+      if (!token) {
+        throw new Error("Token tidak ditemukan dalam response");
       }
-
-
-      dispatch(setAuth({token}));
+  
+      dispatch(setAuth({ token }));
       localStorage.setItem(`${Cfg.PrefixStorage}token`, token);
-
+  
       const profileResponse = await triggerGetProfile().unwrap();
-      
-      if(!profileResponse?.data) {
+      const user = profileResponse?.data;
+  
+      if (!user) {
         throw new Error("Data profil tidak ditemukan");
       }
-
-      const user = profileResponse.data;
-      dispatch(setUserProfile({user}));
-
+  
+      dispatch(setUserProfile({ user }));
+  
       toast.success("Login berhasil");
+  
+      // Redirect setelah semuanya OK
       navigate("/dashboard");
     } catch (err: any) {
       console.error("Login error:", err);
       const message =
-      err?.data?.message ||
-      err?.message ||
-      "Login gagal. Periksa kembali kredensial akun Anda.";
+        err?.data?.message ||
+        err?.message ||
+        "Login gagal. Periksa kembali kredensial akun Anda.";
       toast.error(message);
+    } finally {
+      setLoadingPage(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -182,6 +193,7 @@ const LoginPage: React.FC = () => {
         </motion.div>
       </div>
       <Footer />
+      {loadingPage && <FullScreenLoader />}
     </div>
   );
 };

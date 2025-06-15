@@ -7,94 +7,11 @@ import { Link, useLocation } from "react-router-dom";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useAppSelector } from "../../stores/hooks";
 import {
-  BoxCubeIcon,
-  ChevronDownIcon,
-  HorizontaLDots,
-  PieChartIcon,
+  ChevronDownIcon
 } from "../../assets/icons";
 import type { NavigationItem } from "../../interfaces/appInterface";
 import { selectUserListAccess } from "../../stores/selectors";
 
-const othersItems: NavigationItem[] = [
-  {
-    menu_name: "Charts",
-    menu_slug: "/charts",
-    menu_icon: {
-      type: "icon",
-      value: <PieChartIcon />,
-    },
-    menu_order_number: 1,
-    childrens: [
-      {
-        menu_name: "Line Chart",
-        menu_slug: "/line-chart",
-        menu_icon: null,
-        menu_order_number: 1,
-        childrens: [],
-      },
-      {
-        menu_name: "Bar Chart",
-        menu_slug: "/bar-chart",
-        menu_icon: null,
-        menu_order_number: 2,
-        childrens: [],
-      },
-    ],
-  },
-  {
-    menu_name: "UI Elements",
-    menu_slug: "/ui-elements",
-    menu_icon: {
-      type: "icon",
-      value: <BoxCubeIcon />,
-    },
-    menu_order_number: 2,
-    childrens: [
-      {
-        menu_name: "Alerts",
-        menu_slug: "/alerts",
-        menu_icon: null,
-        menu_order_number: 1,
-        childrens: [],
-      },
-      {
-        menu_name: "Avatar",
-        menu_slug: "/avatars",
-        menu_icon: null,
-        menu_order_number: 2,
-        childrens: [],
-      },
-      {
-        menu_name: "Badge",
-        menu_slug: "/badge",
-        menu_icon: null,
-        menu_order_number: 3,
-        childrens: [],
-      },
-      {
-        menu_name: "Buttons",
-        menu_slug: "/buttons",
-        menu_icon: null,
-        menu_order_number: 4,
-        childrens: [],
-      },
-      {
-        menu_name: "Images",
-        menu_slug: "/images",
-        menu_icon: null,
-        menu_order_number: 5,
-        childrens: [],
-      },
-      {
-        menu_name: "Videos",
-        menu_slug: "/videos",
-        menu_icon: null,
-        menu_order_number: 6,
-        childrens: [],
-      },
-    ],
-  },
-];
 
 const Sidebar: React.FC = () => {
   const navItems: NavigationItem[] = useAppSelector(selectUserListAccess);
@@ -103,7 +20,6 @@ const Sidebar: React.FC = () => {
   const location = useLocation();
 
   const [openSubmenu, setOpenSubmenu] = useState<{
-    type: "main" | "others";
     index: number;
   } | null>(null);
 
@@ -120,15 +36,12 @@ const Sidebar: React.FC = () => {
 
   useEffect(() => {
     let submenuMatched = false;
-    ["main", "others"].forEach((menuType) => {
-      const items = menuType === "main" ? navItems : othersItems;
 
-      items.forEach((nav: any, index: any) => {
+    navItems.forEach((nav: any, index: any) => {
         if (nav?.childrens && nav?.childrens?.length > 0) {
           nav.childrens.forEach((ch: any) => {
             if (isActive(ch.menu_slug)) {
               setOpenSubmenu({
-                type: menuType as "main" | "others",
                 index,
               });
               submenuMatched = true;
@@ -136,13 +49,11 @@ const Sidebar: React.FC = () => {
           });
         } else if (isActive(nav.menu_slug)) {
           setOpenSubmenu({
-            type: menuType as "main" | "others",
             index,
           });
           submenuMatched = true;
         }
       });
-    });
 
     if (!submenuMatched) {
       setOpenSubmenu(null);
@@ -151,7 +62,7 @@ const Sidebar: React.FC = () => {
 
   useEffect(() => {
     if (openSubmenu !== null) {
-      const key = `${openSubmenu.type}-${openSubmenu.index}`;
+      const key = `menu-${openSubmenu.index}`;
       if (subMenuRefs.current[key]) {
         setSubMenuHeight((prevHeights) => ({
           ...prevHeights,
@@ -161,16 +72,15 @@ const Sidebar: React.FC = () => {
     }
   }, [openSubmenu]);
 
-  const handleSubmenuToggle = (index: number, menuType: "main" | "others") => {
+  const handleSubmenuToggle = (index: number) => {
     setOpenSubmenu((prevOpenSubmenu) => {
       if (
         prevOpenSubmenu &&
-        prevOpenSubmenu.type === menuType &&
         prevOpenSubmenu.index === index
       ) {
         return null;
       }
-      return { type: menuType, index };
+      return { index };
     });
   };
 
@@ -193,16 +103,15 @@ const Sidebar: React.FC = () => {
 
   const renderMenuItems = (
     items: NavigationItem[],
-    menuType: "main" | "others"
   ) => (
     <ul className="flex flex-col gap-4">
-      {items.map((nav, index) => (
+      {items.map((nav, index) => nav.is_sidebar === true && (
         <li key={nav.menu_name}>
           {nav?.childrens?.length > 0 ? (
             <button
-              onClick={() => handleSubmenuToggle(index, menuType)}
+              onClick={() => handleSubmenuToggle(index)}
               className={`menu-item group ${
-                openSubmenu?.type === menuType && openSubmenu?.index === index
+                openSubmenu?.index === index
                   ? "menu-item-active"
                   : "menu-item-inactive"
               } cursor-pointer ${
@@ -213,7 +122,7 @@ const Sidebar: React.FC = () => {
             >
               {/* <span
                 className={`menu-item-icon-size  ${
-                  openSubmenu?.type === menuType && openSubmenu?.index === index
+                  openSubmenu?.index === index
                     ? "menu-item-icon-active"
                     : "menu-item-icon-inactive"
                 }`}
@@ -226,7 +135,6 @@ const Sidebar: React.FC = () => {
               {(isExpanded || isHovered || isMobileOpen) && (
                 <ChevronDownIcon
                   className={`ml-auto w-5 h-5 transition-transform duration-200 ${
-                    openSubmenu?.type === menuType &&
                     openSubmenu?.index === index
                       ? "rotate-180 text-brand-500"
                       : ""
@@ -264,19 +172,18 @@ const Sidebar: React.FC = () => {
             (isExpanded || isHovered || isMobileOpen) && (
               <div
                 ref={(el) => {
-                  subMenuRefs.current[`${menuType}-${index}`] = el;
+                  subMenuRefs.current[`menu-${index}`] = el;
                 }}
                 className="overflow-hidden transition-all duration-300"
                 style={{
                   height:
-                    openSubmenu?.type === menuType &&
                     openSubmenu?.index === index
-                      ? `${subMenuHeight[`${menuType}-${index}`]}px`
+                      ? `${subMenuHeight[`menu-${index}`]}px`
                       : "0px",
                 }}
               >
                 <ul className="mt-2 space-y-1 ml-9">
-                  {nav?.childrens?.map((subItem) => (
+                  {nav?.childrens?.map((subItem) => subItem.is_sidebar == true &&  (
                     <li key={subItem.menu_name}>
                       <Link
                         to={subItem.menu_slug}
@@ -350,36 +257,7 @@ const Sidebar: React.FC = () => {
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             <div>
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "justify-start"
-                }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Menu"
-                ) : (
-                  <HorizontaLDots className="size-6" />
-                )}
-              </h2>
-              {renderMenuItems(navItems, "main")}
-            </div>
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "justify-start"
-                }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(othersItems, "others")}
+              {renderMenuItems(navItems)}
             </div>
           </div>
         </nav>

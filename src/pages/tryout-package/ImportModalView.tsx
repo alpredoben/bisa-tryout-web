@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Modal } from "../../components/ui/modal";
+import { useImportFileMutation } from "../../services/packageTryoutApi";
 
 interface I_ImportProps {
   isOpen: boolean;
@@ -17,12 +18,27 @@ export function ImportModalView({
   onError,
 }: I_ImportProps) {
   const [file, setFile] = useState<File | null>(null);
+  const [importFile] = useImportFileMutation()
   const eventCloseModalHandler = () => {
     closeModal();
   };
 
   const eventSubmitHandler = async(e: React.ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault()
+    if(file) {
+      try {
+        const response = await importFile(file as File).unwrap();
+        onSuccess?.(response.message);
+        eventCloseModalHandler()
+      } catch (error: any) {
+        console.log({error})
+        onError?.(error?.data?.message ?? "Upload file gagal");
+      }
+    }
+    else {
+      onError?.('Tidak ada file yang dipilih')
+    }
+    
   }
 
   const eventFileUploadHandler = (event: React.ChangeEvent<HTMLInputElement>) => {

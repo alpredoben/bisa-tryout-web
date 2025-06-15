@@ -13,6 +13,7 @@ import { filesApi } from '../services/fileApi';
 import { userApi } from '../services/userApi';
 import { categoryTryoutApi } from '../services/categoryTryoutApi';
 import { packageTryoutApi } from '../services/packageTryoutApi';
+import { historyTryoutApi } from '../services/historyTryoutApi';
 
 const persistConfig = {
   key: 'root',
@@ -32,7 +33,8 @@ const rootReducer = combineReducers({
   [filesApi.reducerPath]: filesApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
   [categoryTryoutApi.reducerPath]: categoryTryoutApi.reducer,
-  [packageTryoutApi.reducerPath]: packageTryoutApi.reducer
+  [packageTryoutApi.reducerPath]: packageTryoutApi.reducer,
+  [historyTryoutApi.reducerPath]: historyTryoutApi.reducer
 });
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);

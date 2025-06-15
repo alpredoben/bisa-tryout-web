@@ -19,11 +19,12 @@ import type { RootState } from "./stores/rootReducer";
 import { MenuPage } from "./pages/menu";
 import { TryoutPackage } from "./pages/tryout-package";
 import { CategoryTryoutPage } from "./pages/category-tryout";
+import { HistoryTryoutPage } from "./pages/history-tryout";
 
 const App = () => {
-   // Mengambil status autentikasi dari Redux store
-   const token = useSelector((state: RootState) => state.auth.token);
-   const isAuthenticated = !!token; 
+  // Mengambil status autentikasi dari Redux store
+  const token = useSelector((state: RootState) => state.auth.token);
+  const isAuthenticated = !!token;
 
   return (
     <>
@@ -43,10 +44,21 @@ const App = () => {
         />
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <LandingPage />} />
-          <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
-          <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" />} />
-          
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? <Navigate to="/dashboard" /> : <LandingPage />
+            }
+          />
+          <Route
+            path="/login"
+            element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/register"
+            element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" />}
+          />
+
           <Route path="/403" element={<ForbiddenPage />} />
           <Route path="*" element={<NotFoundPage />} />
 
@@ -101,6 +113,15 @@ const App = () => {
               <Route index element={<TryoutPackage />} />
             </Route>
 
+            <Route
+              path="/history-import-tryout"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route
+                index
+                element={<HistoryTryoutPage history_type="import" />}
+              />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

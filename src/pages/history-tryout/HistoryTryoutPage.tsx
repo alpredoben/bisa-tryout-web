@@ -6,22 +6,20 @@ import { PageMeta } from "../../components/common/PageMeta";
 import { useFetchHistoryTryoutQuery } from "../../services/historyTryoutApi";
 import HistoryTryoutTable from "./HistoryTryoutTable";
 import Select from "../../components/form/Select";
-
-interface I_HistoryProps {
-  history_type?: string;
-}
+import { useSearchParams } from "react-router-dom";
 
 const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100];
 
-const HistoryTryoutPage = ({history_type = 'all'}: I_HistoryProps) => {
+const HistoryTryoutPage = () => {
+  const [searchParams] = useSearchParams();
+  const historyType = searchParams.get("history_type") || "ALL";
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [searchTextTemp, setSearchTextTemp] = useState("");
   const [searchText, setSearchText] = useState("");
-  const [directionName, setDirectionName] = useState("created_at");
+  const [directionName, setDirectionName] = useState("updated_at");
   const [orderName, setOrderName] = useState<"asc" | "desc">("desc");
-  const [historyStatus, setHistoryStatus] = useState<string>('all')
-
+  const [historyStatus, setHistoryStatus] = useState<string>("all");
 
   const options = [
     { value: "ALL", label: "ALL" },
@@ -46,8 +44,8 @@ const HistoryTryoutPage = ({history_type = 'all'}: I_HistoryProps) => {
   } = useFetchHistoryTryoutQuery({
     page,
     limit,
-    history_status:historyStatus,
-    history_type,
+    history_status: historyStatus,
+    history_type: historyType, // value from parameter "history_type"
     direction_name: directionName,
     order_name: orderName,
     search: searchText,
@@ -79,9 +77,14 @@ const HistoryTryoutPage = ({history_type = 'all'}: I_HistoryProps) => {
         description="This is master tryout package on admin panel"
       />
 
-      <BreadCrumb pageTitle="PAKET TRYOUT" segment={`Paket Tryout`} />
+      <BreadCrumb
+        pageTitle="RIWAYAT TRYOUT"
+        activeTitle={`PAKET TRYOUT`}
+        segment={`RIWAYAT TRYOUT`}
+        url={`/tryout-packages`}
+      />
       <div className="space-y-6">
-        <ComponentCard title="RIWAYAT IMPORT PAKET TRYOUT">
+        <ComponentCard title="DATA RIWA">
           {/* Top Controls */}
           <div className="flex flex-wrap items-center gap-4 w-full sm:flex-nowrap mt-10">
             {/* Limit Dropdown */}
@@ -120,7 +123,7 @@ const HistoryTryoutPage = ({history_type = 'all'}: I_HistoryProps) => {
                     />
                   </div>
                 </div>
-                
+
                 {/* Search Input */}
                 <div className="w-full">
                   <div className="w-full">
@@ -131,7 +134,7 @@ const HistoryTryoutPage = ({history_type = 'all'}: I_HistoryProps) => {
                       type="text"
                       value={searchTextTemp}
                       onChange={eventSearchChangeHandler}
-                      placeholder="Cari Nama/Kategori/Keterangan..."
+                      placeholder="Cari Status/Jenis/Keterangan..."
                       className="px-3 py-2 border border-gray-300 rounded text-sm w-full focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
@@ -181,4 +184,4 @@ const HistoryTryoutPage = ({history_type = 'all'}: I_HistoryProps) => {
   );
 };
 
-export default HistoryTryoutPage
+export default HistoryTryoutPage;

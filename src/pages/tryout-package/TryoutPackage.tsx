@@ -34,7 +34,7 @@ const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100];
 
 const LIST_BUTTONS:I_LIST_BUTTONS[] = [
   { name: "import", key: 1, label: "Import Paket Tryout" },
-  { name: "download", key: 2, label: "Download Paket Tryout" },
+  // { name: "download", key: 2, label: "Download Paket Tryout" },
   { name: "download", key: 3, label: "Download Template"},
   { name: "report", key: 4, label: "Riwayat Paket Tryout" },
 ];
@@ -201,7 +201,7 @@ const TryoutPackage = () => {
         break;
       
       case 'report':
-        navigate('/history-import-tryout')
+        navigate('/history-import-tryout?history_type=import')
         break;
 
       default:

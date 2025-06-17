@@ -119,7 +119,7 @@ const App = () => {
             >
               <Route
                 index
-                element={<HistoryTryoutPage history_type="import" />}
+                element={<HistoryTryoutPage />}
               />
             </Route>
           </Route>

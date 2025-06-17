@@ -1,8 +1,5 @@
-
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-} from "../../assets/icons";
+import { ArrowDownIcon, ArrowUpIcon } from "../../assets/icons";
+import Badge from "../../components/ui/badge/Badge";
 import {
   Table,
   TableBody,
@@ -20,33 +17,32 @@ const tableHeaders: I_TableHeaders[] = [
   {
     id: 1,
     title: "No",
-    className: 'justify-center'
+    className: "justify-center",
   },
   {
     id: 2,
     title: "Status",
     name: "history_status",
-    className: 'justify-center'
+    className: "justify-center",
   },
   {
     id: 3,
     title: "Jenis",
     name: "history_type",
-    className: 'justify-center'
+    className: "justify-center",
   },
   {
     id: 4,
     title: "Keterangan",
     name: "history_description",
-    className: 'justify-center'
+    className: "justify-center",
   },
   {
-    id: 4,
+    id: 5,
     title: "Updated At",
     name: "updated_at",
-    className: 'justify-center'
+    className: "justify-center",
   },
-
 ];
 
 export default function HistoryTryoutTable({
@@ -113,18 +109,24 @@ export default function HistoryTryoutTable({
                           isSortable && eventRowSortHandler(item.name)
                         }
                       >
-                        <div className={`flex flex-row items-start py-0 px-0 ${item.className}`}>
-                          <div className={`${isSortable && isActive ? "basis-3/4" : "basis-4/4"}`}>
+                        <div
+                          className={`flex flex-row items-start py-0 px-0 ${item.className}`}
+                        >
+                          <div
+                            className={`${
+                              isSortable && isActive ? "basis-3/4" : "basis-4/4"
+                            }`}
+                          >
                             {item.title.toUpperCase()}
                           </div>
-                          
+
                           {isSortable && isActive && (
                             <div className="basis-1/4">
                               {orderName === "asc" ? (
-                                  <ArrowUpIcon />
-                                ) : (
-                                  <ArrowDownIcon />
-                                )}
+                                <ArrowUpIcon />
+                              ) : (
+                                <ArrowDownIcon />
+                              )}
                             </div>
                           )}
                         </div>
@@ -138,17 +140,32 @@ export default function HistoryTryoutTable({
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {records.length > 0 ? (
                   records.map((record, index) => (
-                    <TableRow key={record.package_id || index} className={`${
-                      (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white" 
-                    }`}>
+                    <TableRow
+                      key={record.package_id || index}
+                      className={`${
+                        (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white"
+                      }`}
+                    >
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
                         {(page - 1) * limit + index + 1}
                       </TableCell>
-                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-white">
-                        {record.history_status}
+                      <TableCell className="px-4 py-3 text-theme-sm text-slate-700 dark:text-white text-center">
+                        <Badge
+                          size="sm"
+                          color={
+                            record.history_status.toLowerCase() === "done"
+                              ? "success"
+                              : record.history_status.toLowerCase() ===
+                                "on progress"
+                              ? "warning"
+                              : "error"
+                          }
+                        >
+                          {record.history_status.toUpperCase()}
+                        </Badge>
                       </TableCell>
-                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-white">
-                        {record.history_type}
+                      <TableCell className="px-4 py-3 text-center font-bold text-theme-sm text-slate-700 dark:text-white">
+                        {record.history_type.toUpperCase()}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-justify text-sm text-slate-700 dark:text-white break-words">
                         {record.history_description}
@@ -159,7 +176,10 @@ export default function HistoryTryoutTable({
                               new Date(record.updated_at),
                               "dd MMM yyyy"
                             )
-                          : ""}
+                          : record?.created_at ? formatedDate(
+                            new Date(record.created_at),
+                            "dd MMM yyyy"
+                          ): ''}
                       </TableCell>
                     </TableRow>
                   ))

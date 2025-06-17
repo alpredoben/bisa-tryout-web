@@ -59,5 +59,8 @@ export const RestApi = {
       DownloadTemplate: `/tryout-packages/download-template`,
       ImportFile: `/tryout-packages/imported`
     },
+    HistoryTryout: {
+      Fetch: '/history-tryout'
+    }
   } 
 }

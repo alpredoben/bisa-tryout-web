@@ -5,9 +5,10 @@ interface BreadcrumbProps {
   url?: any | '/';
   pageTitle: string;
   segment?: any | null;
+  activeTitle?: any | null;
 }
 
-export const BreadCrumb: React.FC<BreadcrumbProps> = ({ url, pageTitle, segment }) => {
+export const BreadCrumb: React.FC<BreadcrumbProps> = ({ url, pageTitle, segment, activeTitle }) => {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
       <h2
@@ -23,7 +24,7 @@ export const BreadCrumb: React.FC<BreadcrumbProps> = ({ url, pageTitle, segment 
               className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
               to={url}
             >
-              {pageTitle}
+              {activeTitle}
               <svg
                 className="stroke-current"
                 width="17"

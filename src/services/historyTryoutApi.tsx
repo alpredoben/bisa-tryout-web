@@ -32,7 +32,7 @@ export const historyTryoutApi = createApi({
     >({
       query: ({ page, limit, direction_name, order_name, history_status = 'all', history_type = 'all', search }) => {
         return {
-          url: RestApi.Endpoint.PackageTryout.Fetch,
+          url: RestApi.Endpoint.HistoryTryout.Fetch,
           params: { page, limit, direction_name, order_name, history_status, history_type, search },
         }
       },

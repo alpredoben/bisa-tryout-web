@@ -11,6 +11,7 @@ export type NavigationItem = {
   menu_slug: string;
   menu_icon: MenuIcon;
   menu_order_number: number;
+  is_sidebar: boolean;
   childrens: NavigationItem[];
 };
 
@@ -68,12 +69,12 @@ export interface I_TableProperties {
   orderName: "asc" | "desc";
   setDirectionName: (value: string) => void;
   setOrderName: (value: "asc" | "desc") => void;
-  onEdit: (data: any) => void;
-  onRemove: (data: any) => void;
+  onEdit?: (data: any) => void;
+  onRemove?: (data: any) => void;
   onSuccess?: (message: string) => void; 
   onError?: (message: string) => void;
   refetchTable?: () => void;
-  listPermissions: string[]
+  listPermissions?: any[]
 }
 
 export interface I_TableHeaders {

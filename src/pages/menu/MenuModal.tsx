@@ -18,6 +18,7 @@ import {
   useSaveFileMutation,
   useUpdateFileMutation,
 } from "../../services/fileApi";
+import Select from "../../components/form/Select";
 
 interface I_FileInput {
   module_name: string;
@@ -38,11 +39,18 @@ export function MenuModal({
     skip: !isEditMode || !selectMenuId,
   });
 
+  const optIsSidebar = [
+    { value: 'ya', label: "Ya" },
+    { value: 'tidak', label: "Tidak" },
+  ];
+
+
   const [formData, setFormData] = useState<I_MenuInput>({
     name: "",
     slug: "",
     order_number: 1,
     parent_id: null,
+    is_sidebar: null,
     file_id: null,
   });
 
@@ -73,6 +81,7 @@ export function MenuModal({
       slug: "",
       order_number: 1,
       parent_id: null,
+      is_sidebar: false,
       file_id: null
     })
 
@@ -104,6 +113,7 @@ export function MenuModal({
         name: menuData.name,
         slug: menuData.slug,
         order_number: menuData.order_number,
+        is_sidebar: Boolean(menuData?.is_sidebar),
         parent_id: menuData.parent_id,
       });
       if(menuData?.icon?.file_url) {
@@ -121,10 +131,18 @@ export function MenuModal({
         name: "",
         slug: "",
         order_number: 1,
+        is_sidebar: null,
         parent_id: null,
       });
     }
   }, [menuData, isEditMode, isOpen]);
+
+  const eventSelectChangeHandler = (value: string) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      is_sidebar: value == '' ? null : value === 'ya' ? true : false
+    }))
+  }
 
   const eventOnChangeInput = (e: any) => {
     setFormData({
@@ -184,25 +202,30 @@ export function MenuModal({
       delete payload?.parent_id;
     }
 
-    try {
-      let message: string = "";
-      if (isEditMode) {
-        const response = await updateMenu({
-          menu_id: selectMenuId,
-          data: payload,
-        }).unwrap();
-        message = response?.message;
-      } else {
-        const response = await createMenu(payload).unwrap();
-        message = response?.message;
+    if(formData.is_sidebar == null) {
+      toast.error('Silahkan pilih status sidebar menu')
+    }
+    else {
+      try {
+        let message: string = "";
+        if (isEditMode) {
+          const response = await updateMenu({
+            menu_id: selectMenuId,
+            data: payload,
+          }).unwrap();
+          message = response?.message;
+        } else {
+          const response = await createMenu(payload).unwrap();
+          message = response?.message;
+        }
+  
+        refetchData?.();
+        eventCloseModal()
+        onSuccess?.(message);
+      } catch (error: any) {
+        console.error("Error submit - update menu", error);
+        toast.error(error.data.message);
       }
-
-      refetchData?.();
-      eventCloseModal()
-      onSuccess?.(message);
-    } catch (error: any) {
-      console.error("Error submit - update menu", error);
-      toast.error(error.data.message);
     }
   };
 
@@ -314,6 +337,30 @@ filesApi
               min={1}
               max={100}
               step={1}
+            />
+          </div>
+
+
+          <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
+            <label
+              htmlFor="is_sidebar"
+              className="py-3 text-sm font-medium text-gray-700 w-[80px]"
+            >
+              Sidebar Menu
+            </label>
+            <Select
+              key={formData.is_sidebar === true ? "ya" : formData.is_sidebar === false ? "tidak" : "empty"}
+              options={optIsSidebar}
+              placeholder="Sidebar Menu"
+              onChange={eventSelectChangeHandler}
+              className="dark:bg-dark-900"
+              defaultValue={
+                formData.is_sidebar === true
+                  ? 'ya'
+                  : formData.is_sidebar === false
+                  ? 'tidak'
+                  : ''
+              }
             />
           </div>
 

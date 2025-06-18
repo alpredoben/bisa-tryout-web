@@ -56,7 +56,12 @@ export const RestApi = {
       FindById: (id: string) => `/tryout-packages/${id}`,
       Create: `/tryout-packages`, 
       Update: (id:string) => `/tryout-packages/${id}`,
-      Delete: (id: string) => `/tryout-packages/${id}`
+      Delete: (id: string) => `/tryout-packages/${id}`,
+      DownloadTemplate: `/tryout-packages/download-template`,
+      ImportFile: `/tryout-packages/imported`
     },
+    HistoryTryout: {
+      Fetch: '/history-tryout'
+    }
   } 
 }

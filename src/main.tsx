@@ -12,13 +12,14 @@ import { store, persistor } from "./stores/index.tsx";
 import { ThemeProvider } from "./providers/ThemeProvider.tsx";
 // import { AppWrapper } from "./providers/AppWrapper.tsx";
 import { HelmetProvider } from "react-helmet-async";
+import { FullScreenLoader } from "./components/common/FullScreenLoader.tsx";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <HelmetProvider>
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+        <PersistGate loading={<FullScreenLoader />} persistor={persistor}>
           <QueryClientProvider client={queryClient}>
             <ThemeProvider>
               <App />

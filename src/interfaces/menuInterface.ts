@@ -4,6 +4,7 @@ export interface I_MenuInput {
   slug: string;
   order_number: number;
   parent_id?: any | null;
+  is_sidebar: any | null
   file_id?: any | null;
 }
 

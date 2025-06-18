@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
@@ -11,22 +12,35 @@ import { CategoryDropdown } from "./CategoryDropdown";
 import { useAppSelector } from "../../stores/hooks";
 import { selectGrantedPermissions } from "../../stores/selectors";
 import {
+  packageTryoutApi,
   useDeletePackageMutation,
   useFetchPackagesQuery,
 } from "../../services/packageTryoutApi";
 import TryoutPackageTable from "./TryoutPackageTable";
 import { Slide, toast } from "react-toastify";
 import { TryoutPackageModal } from "./TryoutPackageModal";
+import { saveAs } from "file-saver";
+import { useAppDispatch } from "../../stores";
+import { formatedDate } from "../../utils/helpers";
+import { useNavigate } from "react-router-dom";
+
+interface I_LIST_BUTTONS {
+  name: string,
+  key: number,
+  label: string
+}
 
 const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100];
 
-const LIST_BUTTONS = [
-  { name: "import", label: "Import" },
-  { name: "download", label: "Download" },
-  { name: "report", label: "Riwayat" },
+const LIST_BUTTONS:I_LIST_BUTTONS[] = [
+  { name: "import", key: 1, label: "Import Paket Tryout" },
+  // { name: "download", key: 2, label: "Download Paket Tryout" },
+  { name: "download", key: 3, label: "Download Template"},
+  { name: "report", key: 4, label: "Riwayat Paket Tryout" },
 ];
 
 const TryoutPackage = () => {
+  const navigate = useNavigate();
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [searchTextTemp, setSearchTextTemp] = useState("");
@@ -46,7 +60,9 @@ const TryoutPackage = () => {
   const listPermissions = useAppSelector(selectGrantedPermissions);
 
   const [deletePackage] = useDeletePackageMutation();
-  const [typeName, setTypeName] = useState(null)
+  const [typeName, setTypeName] = useState<any|null>(null)
+
+  const dispatch = useAppDispatch();
 
   const {
     data = {
@@ -124,20 +140,76 @@ const TryoutPackage = () => {
     setSearchTextTemp(e.target.value);
   };
 
-  const eventAddHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const eventAddHandler = (_e: React.ChangeEvent<HTMLInputElement>) => {
     setTypeName(null)
     openModal()
   }
 
-  const eventButtonDropdownHandler = (
+  const handleDownloadTemplate = async () => {
+    try {
+      const result = await dispatch(
+        packageTryoutApi.endpoints.downloadTemplate.initiate(undefined, {
+          forceRefetch: true,
+          subscribe: false,
+        })
+      );
+
+      const blob = result.data as Blob | undefined;
+      const headers = (result as any).meta?.response?.headers;
+
+      let filename = `TemplatePaketTryout${formatedDate(new Date(), 'yyymmddhhiiss')}.xlsx`;
+      if (headers) {
+        const contentDisposition = headers.get("Content-Disposition");
+        const match = contentDisposition?.match(/filename="?([^"]+)"?/);
+        if (match && match[1]) {
+          filename = decodeURIComponent(match[1]);
+        }
+      }
+
+      if (blob) {
+        saveAs(blob, filename);
+        toast.success("Template berhasil diunduh");
+      } else {
+        toast.error("Gagal mengunduh file");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Terjadi kesalahan saat mengunduh");
+    }
+  };
+
+  const eventButtonDropdownHandler = async(
     e: React.ChangeEvent<HTMLInputElement>,
-    item: any
+    item: I_LIST_BUTTONS
   ) => {
     e.preventDefault();
-    setTypeName((prev: any) => item.name)
-    if(item.name === 'import') {
-      openModal()
+    setTypeName((_prev: any) => item.name)
+
+
+    switch (item.name.toLowerCase()) {
+      case 'import':
+        openModal()
+        break;
+    
+      case 'download':
+        if(item.key == 2) {
+          // Download all
+        } else if(item.key == 3) {
+          // Download Template
+          await handleDownloadTemplate();
+        }
+        break;
+      
+      case 'report':
+        navigate('/history-import-tryout?history_type=import')
+        break;
+
+      default:
+        break;
     }
+
+
+    
   };
 
   return (
@@ -247,7 +319,7 @@ const TryoutPackage = () => {
                             LIST_BUTTONS.map(
                               (item) =>
                                 listPermissions.includes(item.name) && (
-                                  <MenuItem key={item.name}>
+                                  <MenuItem key={item.key}>
                                     {({ active }) => (
                                       <button
                                         className={`w-full text-left px-4 py-2 text-sm font-medium rounded ${

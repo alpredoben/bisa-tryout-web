@@ -10,6 +10,7 @@ import type {
   I_AuthResetPassword,
   I_AuthUpdateProfile,
   I_UserProfile,
+  I_AuthManualChangePassword,
 } from '../interfaces/authInterface';
 import {Environment as Cfg} from '../constants/environment'
 import { RestApi } from '../constants/config';
@@ -67,6 +68,14 @@ export const authApi = createApi({
       }),
     }),
 
+    manualChangePassword: builder.mutation<any, I_AuthManualChangePassword>({
+      query: (data) => ({
+        url: RestApi.Endpoint.Auth.ManualChangePassword,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+
     getProfile: builder.query<I_UserProfile | any, void>({
       query: () => ({
         url: RestApi.Endpoint.Auth.Profile,
@@ -93,6 +102,7 @@ export const {
   useForgotPasswordMutation,
   useVerifiedOtpMutation,
   useResetPasswordMutation,
+  useManualChangePasswordMutation,
   useGetProfileQuery,
   useLazyGetProfileQuery,
   useUpdateProfileMutation,

@@ -1,0 +1,1 @@
+export {default as TryoutCategoryPage} from './TryoutCategoryPage'

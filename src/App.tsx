@@ -19,8 +19,10 @@ import { useSelector } from "react-redux";
 import type { RootState } from "./stores/rootReducer";
 import { MenuPage } from "./pages/menu";
 import { TryoutPackage } from "./pages/tryout-package";
-import { CategoryTryoutPage } from "./pages/category-tryout";
 import { HistoryTryoutPage } from "./pages/history-tryout";
+import { OrganizationPage } from "./pages/organization";
+import { TryoutCategoryPage } from "./pages/tryout-category";
+import { TryoutStagePage } from "./pages/tryout-stage";
 
 const App = () => {
   // Mengambil status autentikasi dari Redux store
@@ -100,6 +102,7 @@ const App = () => {
               <Route index element={<PermissionPage />} />
             </Route>
 
+            {/* Master User */}
             <Route
               path="/master-user"
               element={<PrivateRoute requiredPermission="read" />}
@@ -107,11 +110,28 @@ const App = () => {
               <Route index element={<UserPage />} />
             </Route>
 
+            {/* Organization */}
+            <Route
+              path="/organization"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<OrganizationPage />} />
+            </Route>
+
+            {/* Tryout Category */}
             <Route
               path="/tryout-categories"
               element={<PrivateRoute requiredPermission="read" />}
             >
-              <Route index element={<CategoryTryoutPage />} />
+              <Route index element={<TryoutCategoryPage />} />
+            </Route>
+
+            {/* Tryout Stage */}
+            <Route
+              path="/tryout-stages"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<TryoutStagePage />} />
             </Route>
 
             <Route

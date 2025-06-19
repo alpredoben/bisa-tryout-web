@@ -69,6 +69,27 @@ export const RestApi = {
       Create: `/question-types`, 
       Update: (id:string) => `/question-types/${id}`,
       Delete: (id: string) => `/question-types/${id}`,
+    },
+    Organization: {
+      Fetch: '/organizations',
+      FindById: (id: string) => `/organizations/${id}`,
+      Create: `/organizations`, 
+      Update: (id:string) => `/organizations/${id}`,
+      Delete: (id: string) => `/organizations/${id}`,
+    },
+    TryoutCategory: {
+      Fetch: '/tryout-categories',
+      FindById: (id: string) => `/tryout-categories/${id}`,
+      Create: `/tryout-categories`, 
+      Update: (id:string) => `/tryout-categories/${id}`,
+      Delete: (id: string) => `/tryout-categories/${id}`,
+    },
+    TryoutStage: {
+      Fetch: '/tryout-stages',
+      FindById: (id: string) => `/tryout-stages/${id}`,
+      Create: `/tryout-stages`, 
+      Update: (id:string) => `/tryout-stages/${id}`,
+      Delete: (id: string) => `/tryout-stages/${id}`,
     }
   } 
 }

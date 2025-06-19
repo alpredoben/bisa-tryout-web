@@ -1,5 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  PencilIcon,
+  TrashBinIcon,
+} from "../../assets/icons";
 import {
   Table,
   TableBody,
@@ -7,54 +12,55 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  PencilIcon,
-  TrashBinIcon,
-} from "../../assets/icons";
 import type {
   I_TableHeaders,
   I_TableProperties,
 } from "../../interfaces/appInterface";
-import { formatedDate } from "../../utils/helpers";
+import {  formatedDate } from "../../utils/helpers";
 
 const tableHeaders: I_TableHeaders[] = [
-  { id: 1, title: "No", className: "justify-center" },
-  { id: 2, title: "Name", name: "name", className: "justify-center" },
-  { id: 3, title: "Keterangan", name: "description", className: "justify-center" },
+  {
+    id: 1,
+    title: "No",
+    className: 'justify-center'
+  },
+  {
+    id: 2,
+    title: "Nama",
+    name: "name",
+    className: 'justify-center'
+  },
+  {
+    id: 3,
+    title: "Keterangan",
+    name: "description",
+    className: 'justify-center'
+  },
   {
     id: 4,
-    title: "Created At",
-    name: "created_at",
-    className: "justify-center",
+    title: "Dibuat",
+    name: "updated_at",
+    className: 'justify-center'
   },
-  { id: 5, title: "Action", className: "justify-center" },
+  {
+    id: 5,
+    title: "Action",
+    className: 'justify-center'
+  },
 ];
 
-export default function CategoryTryoutTable({
-  datatable,
+export default function TryoutStageTable({
   page,
+  listPermissions,
+  onEdit,
   setPage,
+  datatable,
   orderName,
   directionName,
-  setDirectionName,
-  setOrderName,
-  onEdit,
   onRemove,
-  listPermissions,
+  onSortRow
 }: I_TableProperties) {
-  const { records, total_row, limit, total_page } = datatable;
-
-  const eventRowSortHandler = (column: string | undefined) => {
-    if (!column) return;
-    if (directionName === column) {
-      setOrderName(orderName === "asc" ? "desc" : "asc");
-    } else {
-      setDirectionName(column);
-      setOrderName("asc");
-    }
-  };
+  const { records, total_page, total_row, limit } = datatable;
 
   // Generate pagination numbers (simple logic showing max 5 pages)
   const generatePages = () => {
@@ -95,27 +101,21 @@ export default function CategoryTryoutTable({
                         isHeader
                         className={`px-2 py-3 font-bold text-white text-theme-sm dark:text-white cursor-pointer bg-slate-800 border border-white`}
                         onClick={() =>
-                          isSortable && eventRowSortHandler(item.name)
+                          isSortable && onSortRow?.(item.name)
                         }
                       >
-                        <div
-                          className={`flex flex-row items-start py-0 px-0 ${item.className}`}
-                        >
-                          <div
-                            className={`${
-                              isSortable && isActive ? "basis-3/4" : "basis-4/4"
-                            }`}
-                          >
+                        <div className={`flex flex-row items-start py-0 px-0 ${item.className}`}>
+                          <div className={`${isSortable && isActive ? "basis-3/4" : "basis-4/4"}`}>
                             {item.title.toUpperCase()}
                           </div>
-
+                          
                           {isSortable && isActive && (
                             <div className="basis-1/4">
                               {orderName === "asc" ? (
-                                <ArrowUpIcon />
-                              ) : (
-                                <ArrowDownIcon />
-                              )}
+                                  <ArrowUpIcon />
+                                ) : (
+                                  <ArrowDownIcon />
+                                )}
                             </div>
                           )}
                         </div>
@@ -129,44 +129,38 @@ export default function CategoryTryoutTable({
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {records.length > 0 ? (
                   records.map((record, index) => (
-                    <TableRow
-                      key={record.category_id || index}
-                      className={`${
-                        (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white" 
-                      }`}
-                    >
+                    <TableRow key={record.stage_id || index} className={`${
+                      (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white" 
+                    }`}>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
                         {(page - 1) * limit + index + 1}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-white">
                         {record.name}
                       </TableCell>
-                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-white">
+                      <TableCell className="px-4 py-3 text-justify text-sm text-slate-700 dark:text-white break-words">
                         {record.description}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white">
-                        {record?.created_at
+                        {record?.updated_at
                           ? formatedDate(
-                              new Date(record.created_at),
+                              new Date(record.updated_at),
                               "dd MMM yyyy"
                             )
                           : ""}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white">
                         <div className="flex justify-center gap-2">
-                          {listPermissions.includes("update") && (
+                          {listPermissions?.includes("update") && (
                             <button
-                              onClick={() => onEdit(record)}
+                              onClick={() => onEdit?.(record)}
                               className="p-2 text-white hover:text-gray-100 bg-yellow-500 hover:bg-yellow-400 rounded text-sm"
                             >
                               <PencilIcon />
                             </button>
                           )}
-                          {listPermissions.includes("delete") && (
-                            <button
-                              onClick={() => onRemove(record)}
-                              className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm"
-                            >
+                          {listPermissions?.includes("delete") && (
+                            <button onClick={() => onRemove?.(record)} className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm">
                               <TrashBinIcon />
                             </button>
                           )}

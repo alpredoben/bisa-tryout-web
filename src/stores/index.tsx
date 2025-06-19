@@ -15,6 +15,7 @@ import { questionTypeApi } from '../services/questionTypeApi';
 import { organizationApi } from '../services/organizationApi';
 import { tryoutCategoryApi } from '../services/tryoutCategoryApi';
 import { tryoutStageApi } from '../services/tryoutStageApi';
+import { tryoutTypeApi } from '../services/tryoutTypeApi';
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -33,7 +34,8 @@ export const store = configureStore({
       questionTypeApi.middleware,
       organizationApi.middleware,
       tryoutCategoryApi.middleware,
-      tryoutStageApi.middleware
+      tryoutStageApi.middleware,
+      tryoutTypeApi.middleware
     ),
 });
 

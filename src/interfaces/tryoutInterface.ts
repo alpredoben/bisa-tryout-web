@@ -11,6 +11,13 @@ export interface I_TryoutStageInput {
   description: string;
 }
 
+
+/** Tryout Type Input */
+export interface I_TryoutTypeInput {
+  name: string;
+  description: string;
+}
+
 /** Tryout Category Input */
 export interface I_TryoutCategoryInput {
   name: string

@@ -23,6 +23,7 @@ import { HistoryTryoutPage } from "./pages/history-tryout";
 import { OrganizationPage } from "./pages/organization";
 import { TryoutCategoryPage } from "./pages/tryout-category";
 import { TryoutStagePage } from "./pages/tryout-stage";
+import { TryoutTypePage } from "./pages/tryout-type";
 
 const App = () => {
   // Mengambil status autentikasi dari Redux store
@@ -132,6 +133,14 @@ const App = () => {
               element={<PrivateRoute requiredPermission="read" />}
             >
               <Route index element={<TryoutStagePage />} />
+            </Route>
+
+            {/* Tryout Type */}
+            <Route
+              path="/tryout-types"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<TryoutTypePage />} />
             </Route>
 
             <Route

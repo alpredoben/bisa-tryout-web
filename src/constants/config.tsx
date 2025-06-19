@@ -6,6 +6,7 @@ export const RestApi = {
       ForgotPassword: '/auth/forgot-password',
       VerifOtp: '/auth/verified-otp',
       ResetPassword: '/auth/reset-password',
+      ManualChangePassword: '/auth/manual-change-password',
       Profile: '/auth/profile',
       UpdateProfile: '/auth/update-profile'
     },

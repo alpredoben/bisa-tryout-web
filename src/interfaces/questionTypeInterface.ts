@@ -1,0 +1,1 @@
+export interface I_QuestionTypeInput {name: string, description:string}

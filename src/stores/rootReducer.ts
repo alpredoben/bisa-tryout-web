@@ -14,6 +14,7 @@ import { userApi } from '../services/userApi';
 import { categoryTryoutApi } from '../services/categoryTryoutApi';
 import { packageTryoutApi } from '../services/packageTryoutApi';
 import { historyTryoutApi } from '../services/historyTryoutApi';
+import { questionTypeApi } from '../services/questionTypeApi';
 
 const persistConfig = {
   key: 'root',
@@ -34,7 +35,8 @@ const rootReducer = combineReducers({
   [userApi.reducerPath]: userApi.reducer,
   [categoryTryoutApi.reducerPath]: categoryTryoutApi.reducer,
   [packageTryoutApi.reducerPath]: packageTryoutApi.reducer,
-  [historyTryoutApi.reducerPath]: historyTryoutApi.reducer
+  [historyTryoutApi.reducerPath]: historyTryoutApi.reducer,
+  [questionTypeApi.reducerPath]: questionTypeApi.reducer
 });
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);

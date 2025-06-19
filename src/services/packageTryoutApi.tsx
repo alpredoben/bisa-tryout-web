@@ -68,8 +68,8 @@ export const packageTryoutApi = createApi({
     }),
 
     deletePackage: builder.mutation<{ message: string }, string>({
-      query: (roleId) => ({
-        url: RestApi.Endpoint.Roles.Delete(roleId),
+      query: (id: any) => ({
+        url: RestApi.Endpoint.PackageTryout.Delete(id),
         method: "DELETE",
       }),
       invalidatesTags: (_result, _error, id) => [{ type: TAG_NAME, id }],

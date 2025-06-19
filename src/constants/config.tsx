@@ -61,6 +61,13 @@ export const RestApi = {
     },
     HistoryTryout: {
       Fetch: '/history-tryout'
+    },
+    QuestionType: {
+      Fetch: '/question-types',
+      FindById: (id: string) => `/question-types/${id}`,
+      Create: `/question-types`, 
+      Update: (id:string) => `/question-types/${id}`,
+      Delete: (id: string) => `/question-types/${id}`,
     }
   } 
 }

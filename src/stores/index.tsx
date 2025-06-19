@@ -12,6 +12,7 @@ import { userApi } from '../services/userApi';
 import { categoryTryoutApi } from '../services/categoryTryoutApi';
 import { packageTryoutApi } from '../services/packageTryoutApi';
 import { historyTryoutApi } from '../services/historyTryoutApi';
+import { questionTypeApi } from '../services/questionTypeApi';
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -27,7 +28,8 @@ export const store = configureStore({
       userApi.middleware,
       categoryTryoutApi.middleware,
       packageTryoutApi.middleware,
-      historyTryoutApi.middleware
+      historyTryoutApi.middleware,
+      questionTypeApi.middleware
     ),
 });
 

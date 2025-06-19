@@ -5,6 +5,7 @@ import { Slide, ToastContainer } from "react-toastify";
 import { LandingPage } from "./pages/landing";
 import { LoginPage, RegisterPage } from "./pages/auth";
 import { DashboardPage } from "./pages/dashboard";
+import { ProfilePage } from "./pages/profile";
 import ForbiddenPage from "./pages/ForbiddenPage";
 import PrivateRoute from "./routes/PrivateRoute";
 import AdminLayout from "./layouts/admin/AdminLayout";
@@ -68,6 +69,13 @@ const App = () => {
               element={<PrivateRoute requiredPermission="read" />}
             >
               <Route index element={<DashboardPage />} />
+            </Route>
+
+            <Route
+              path="/profile"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={< ProfilePage />} />
             </Route>
 
             {/* Configuration */}

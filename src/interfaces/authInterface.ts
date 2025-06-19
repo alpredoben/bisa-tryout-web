@@ -49,6 +49,12 @@ export interface I_AuthVerifiedOtp {
   otp_code: string;
 }
 
+export interface I_AuthManualChangePassword {
+  old_password: string;
+  new_password: string;
+  confirm_password: string;
+}
+
 export interface I_AuthResetPassword {
   code_permission: string;
   new_password: string;

@@ -11,7 +11,9 @@ import {
 } from "../../assets/icons";
 import type { NavigationItem } from "../../interfaces/appInterface";
 import { selectUserListAccess } from "../../stores/selectors";
+import { IconMenu } from "../../assets";
 
+type IconKey = keyof typeof IconMenu;
 
 const Sidebar: React.FC = () => {
   const navItems: NavigationItem[] = useAppSelector(selectUserListAccess);
@@ -28,11 +30,6 @@ const Sidebar: React.FC = () => {
   );
 
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
-  // const isActive = useCallback(
-  //   (path: string) => location.pathname === path,
-  //   [location.pathname]
-  // );
 
   const isActive = useCallback(
     (path: string) => location.pathname === path || location.pathname.startsWith(path + "/"),
@@ -89,21 +86,12 @@ const Sidebar: React.FC = () => {
     });
   };
 
-  const getIcon = (
-    icon: { type: string; value: any | null } | null
-  ): any | null => {
-    if (icon && icon?.type) {
-      switch (icon.type) {
-        case "icon":
-          return icon.value;
-        case "file":
-          return icon.value.file_path;
-        default:
-          return null;
-      }
+  const getIcon = (nav: any): any | null => {
+    if(nav?.menu_icon && nav?.menu_icon != null) {
+      return nav?.menu_icon?.file_url
     }
-
-    return null;
+    console.log({name: nav.menu_name as IconKey, nav})
+    return IconMenu[nav.menu_name as IconKey];
   };
 
   const renderMenuItems = (
@@ -125,15 +113,11 @@ const Sidebar: React.FC = () => {
                   : "lg:justify-start"
               }`}
             >
-              {/* <span
-                className={`menu-item-icon-size  ${
+              <img src={getIcon(nav)} className={`w-8 h-8 ${
                   openSubmenu?.index === index
                     ? "menu-item-icon-active"
                     : "menu-item-icon-inactive"
-                }`}
-              >
-                {getIcon(nav.menu_icon)}
-              </span> */}
+                }`} />
               {(isExpanded || isHovered || isMobileOpen) && (
                 <span className="menu-item-text">{nav.menu_name}</span>
               )}
@@ -157,15 +141,11 @@ const Sidebar: React.FC = () => {
                     : "menu-item-inactive"
                 }`}
               >
-                {/* <span
-                  className={`menu-item-icon-size ${
-                    isActive(nav.menu_slug)
-                      ? "menu-item-icon-active"
-                      : "menu-item-icon-inactive"
-                  }`}
-                >
-                  {getIcon(nav.menu_icon)}
-                </span> */}
+                <img src={getIcon(nav)} className={`w-8 h-8 ${
+                  openSubmenu?.index === index
+                    ? "menu-item-icon-active"
+                    : "menu-item-icon-inactive"
+                }`} />
                 {(isExpanded || isHovered || isMobileOpen) && (
                   <span className="menu-item-text">{nav.menu_name}</span>
                 )}

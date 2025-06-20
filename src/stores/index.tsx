@@ -17,6 +17,7 @@ import { tryoutCategoryApi } from '../services/tryoutCategoryApi';
 import { tryoutStageApi } from '../services/tryoutStageApi';
 import { tryoutTypeApi } from '../services/tryoutTypeApi';
 import { tryoutPackageApi } from '../services/tryoutPackageApi';
+import { tryoutDetailApi } from '../services/tryoutDetailApi';
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -37,7 +38,8 @@ export const store = configureStore({
       tryoutCategoryApi.middleware,
       tryoutStageApi.middleware,
       tryoutTypeApi.middleware,
-      tryoutPackageApi.middleware
+      tryoutPackageApi.middleware,
+      tryoutDetailApi.middleware
     ),
 });
 

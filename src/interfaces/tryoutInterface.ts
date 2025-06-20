@@ -42,6 +42,17 @@ export interface I_TryoutPackageInput {
 }
 
 
+export interface I_TryoutDetailInput {
+  package_id: any
+  type_id: any
+  total_questions: number
+  total_duration?: number
+  satuan_duration?: string
+  passing_grade: number
+  order_number: number
+}
+
+
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface I_CategoryTryoutDropdownProps {

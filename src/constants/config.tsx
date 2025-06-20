@@ -97,6 +97,13 @@ export const RestApi = {
       Create: `/tryout-types`, 
       Update: (id:string) => `/tryout-types/${id}`,
       Delete: (id: string) => `/tryout-types/${id}`,
-    }
+    },
+    TryoutPackage: {
+      Fetch: '/tryout-packages',
+      FindById: (id: string) => `/tryout-packages/${id}`,
+      Create: `/tryout-packages`, 
+      Update: (id:string) => `/tryout-packages/${id}`,
+      Delete: (id: string) => `/tryout-packages/${id}`,
+    },
   } 
 }

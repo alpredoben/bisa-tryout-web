@@ -1,4 +1,5 @@
 
+import { IconSvg } from "../../assets";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -76,6 +77,7 @@ export default function TryoutCategoryTable({
   orderName,
   directionName,
   onRemove,
+  onView,
   onSortRow
 }: I_TableProperties) {
   const { records, total_page, total_row, limit } = datatable;
@@ -184,6 +186,11 @@ export default function TryoutCategoryTable({
                               className="p-2 text-white hover:text-gray-100 bg-yellow-500 hover:bg-yellow-400 rounded text-sm"
                             >
                               <PencilIcon />
+                            </button>
+                          )}
+                          {listPermissions?.includes("view") && (
+                            <button onClick={() => onView?.(record)} className="w-7 h-8 flex items-center justify-center text-slate-500 hover:text-emerald-700 bg-gray-200 hover:bg-slate-300 rounded border border-slate-300">
+                              <img src={IconSvg.IconEye }  className="w-8 h-full object-contain" />
                             </button>
                           )}
                           {listPermissions?.includes("delete") && (

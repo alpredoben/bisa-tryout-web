@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useMemo, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAppSelector } from "../stores/hooks";
-import { getListPermissions } from "../utils/helpers";
 import { setGrantedPermissions } from "../features/authSlice";
 
 import {
@@ -11,13 +12,16 @@ import {
 } from "../stores/selectors";
 import { useAppDispatch } from "../stores";
 import { FullScreenLoader } from "../components/common/FullScreenLoader";
+import { getListPermissions } from "../utils/helpers";
 
 interface PrivateRouteProps {
   requiredPermission?: string;
+  children?: React.ReactNode; // ✅ tambahkan ini
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({
   requiredPermission = "read",
+  children
 }) => {
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -30,9 +34,17 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   const menuAccess = useMemo(() => user?.list_access || [], [user]);
   const currentPath = location.pathname;
 
-  const listPermissions = useMemo(() => {
-    return getListPermissions(menuAccess, currentPath) || [];
+  // Ambil path prefix berdasarkan route pertama (misal /tryout-packages/view → /tryout-packages)
+  const matchedMenu = useMemo(() => {
+    const segments = currentPath.split("/").filter(Boolean); // ['tryout-packages', 'view']
+    if (segments.length === 0) {
+      return null
+    };
+    const basePath = "/" + segments[0]; // → "/tryout-packages"
+    return getListPermissions(menuAccess, basePath);
   }, [menuAccess, currentPath]);
+
+  const listPermissions = matchedMenu || [];
 
   const isAuthenticated = Boolean(token && user);
   const hasPermission = listPermissions.includes(requiredPermission);
@@ -61,14 +73,12 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  console.log({listPermissions, hasPermission})
-
 
   if (listPermissions.length === 0 || !hasPermission) {
     return <Navigate to="/403" replace />;
   }
 
-  return <Outlet />;
+  return <>{children || <Outlet />}</>;
 };
 
 export default PrivateRoute;

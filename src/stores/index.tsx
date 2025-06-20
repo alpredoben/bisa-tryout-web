@@ -16,6 +16,7 @@ import { organizationApi } from '../services/organizationApi';
 import { tryoutCategoryApi } from '../services/tryoutCategoryApi';
 import { tryoutStageApi } from '../services/tryoutStageApi';
 import { tryoutTypeApi } from '../services/tryoutTypeApi';
+import { tryoutPackageApi } from '../services/tryoutPackageApi';
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -35,7 +36,8 @@ export const store = configureStore({
       organizationApi.middleware,
       tryoutCategoryApi.middleware,
       tryoutStageApi.middleware,
-      tryoutTypeApi.middleware
+      tryoutTypeApi.middleware,
+      tryoutPackageApi.middleware
     ),
 });
 

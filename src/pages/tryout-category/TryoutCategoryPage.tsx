@@ -17,10 +17,12 @@ import TryoutCategoryTable from "./TryoutCategoryTable";
 import { OrganizationDropdown } from "../organization/OrganizationDropdown";
 import { TryoutCategoryModal } from "./TryoutCategoryModal";
 import { PlusIcon } from "../../assets/icons";
+import { useNavigate } from "react-router-dom";
 
 const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100];
 
 export default function TryoutCategoryPage(){
+  const navigate = useNavigate()
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [searchTextTemp, setSearchTextTemp] = useState("");
@@ -109,6 +111,14 @@ export default function TryoutCategoryPage(){
     }
   };
 
+  const eventViewHandler = async(data: any): Promise<void> => {
+    navigate('/tryout-categories/view', {
+      state: {
+        categoryId: data?.category_id
+      }
+    });
+  }
+
   const eventSearchHandler = () => {
     setSearchText(searchTextTemp);
     setPage(1);
@@ -148,7 +158,7 @@ export default function TryoutCategoryPage(){
 
       <BreadCrumb pageTitle="KATEGORI TRYOUT" />
       <div className="space-y-6">
-        <ComponentCard title="MASTER DATA KATEGORI TRYOUT">
+        <ComponentCard title="MASTER KATEGORI TRYOUT">
           {/* Top Controls */}
           <div className="flex flex-wrap items-center gap-4 w-full sm:flex-nowrap mt-10">
             {/* Limit Dropdown */}
@@ -257,6 +267,7 @@ export default function TryoutCategoryPage(){
               directionName={directionName}
               onEdit={eventEditHandler}
               onRemove={eventDeleteHandler}
+              onView={eventViewHandler}
               onSuccess={(message: string) => {
                 toast.success(message, { transition: Slide });
               }}

@@ -1,10 +1,10 @@
-
 import {
   ArrowDownIcon,
   ArrowUpIcon,
   PencilIcon,
   TrashBinIcon,
 } from "../../assets/icons";
+import { IconSvg } from "../../assets/index";
 import {
   Table,
   TableBody,
@@ -22,42 +22,43 @@ const tableHeaders: I_TableHeaders[] = [
   {
     id: 1,
     title: "No",
-    className: 'justify-center'
+    className: "justify-center",
   },
   {
     id: 2,
-    title: "Nama",
-    name: "name",
-    className: 'justify-center'
+    title: "Nama Kategori",
+    name: "category_name",
+    className: "justify-center",
   },
+
   {
     id: 3,
-    title: "Kategori",
-    name: "category_name",
-    className: 'justify-center'
+    title: "Jenis Tes",
+    name: "stage_name",
+    className: "justify-center",
   },
   {
     id: 4,
-    title: "Keterangan",
-    name: "description",
-    className: 'justify-center'
+    title: "Harga",
+    name: "category_prices",
+    className: "justify-center",
   },
   {
     id: 5,
-    title: "Harga",
-    name: "price",
-    className: 'justify-center'
+    title: "Tahun",
+    name: "category_year",
+    className: "justify-center",
   },
   {
     id: 6,
     title: "Dibuat",
-    name: "created_at",
-    className: 'justify-center'
+    name: "updated_at",
+    className: "justify-center",
   },
   {
     id: 7,
     title: "Action",
-    className: 'justify-center'
+    className: "justify-center",
   },
 ];
 
@@ -68,23 +69,12 @@ export default function TryoutPackageTable({
   setPage,
   datatable,
   orderName,
-  setOrderName,
   directionName,
-  setDirectionName,
-  onRemove
+  onRemove,
+  onView,
+  onSortRow,
 }: I_TableProperties) {
   const { records, total_page, total_row, limit } = datatable;
-
-  const eventRowSortHandler = (column: string | undefined) => {
-    if (!column) return;
-
-    if (directionName === column) {
-      setOrderName(orderName === "asc" ? "desc" : "asc");
-    } else {
-      setDirectionName(column);
-      setOrderName("asc");
-    }
-  };
 
   // Generate pagination numbers (simple logic showing max 5 pages)
   const generatePages = () => {
@@ -124,22 +114,26 @@ export default function TryoutPackageTable({
                         key={item.id}
                         isHeader
                         className={`px-2 py-3 font-bold text-white text-theme-sm dark:text-white cursor-pointer bg-slate-800 border border-white`}
-                        onClick={() =>
-                          isSortable && eventRowSortHandler(item.name)
-                        }
+                        onClick={() => isSortable && onSortRow?.(item.name)}
                       >
-                        <div className={`flex flex-row items-start py-0 px-0 ${item.className}`}>
-                          <div className={`${isSortable && isActive ? "basis-3/4" : "basis-4/4"}`}>
+                        <div
+                          className={`flex flex-row items-start py-0 px-0 ${item.className}`}
+                        >
+                          <div
+                            className={`${
+                              isSortable && isActive ? "basis-3/4" : "basis-4/4"
+                            }`}
+                          >
                             {item.title.toUpperCase()}
                           </div>
-                          
+
                           {isSortable && isActive && (
                             <div className="basis-1/4">
                               {orderName === "asc" ? (
-                                  <ArrowUpIcon />
-                                ) : (
-                                  <ArrowDownIcon />
-                                )}
+                                <ArrowUpIcon />
+                              ) : (
+                                <ArrowDownIcon />
+                              )}
                             </div>
                           )}
                         </div>
@@ -153,44 +147,63 @@ export default function TryoutPackageTable({
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {records.length > 0 ? (
                   records.map((record, index) => (
-                    <TableRow key={record.package_id || index} className={`${
-                      (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white" 
-                    }`}>
+                    <TableRow
+                      key={record.stage_id || index}
+                      className={`${
+                        (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white"
+                      }`}
+                    >
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
                         {(page - 1) * limit + index + 1}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-white">
-                        {record.name}
+                        {record.category_name}
                       </TableCell>
-                      <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-white">
-                        {record.tryout_category.name}
-                      </TableCell>
-                      <TableCell className="px-4 py-3 text-justify text-sm text-slate-700 dark:text-white break-words">
-                        {record.description}
+                      <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
+                        {record.stage_name}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-end text-theme-sm text-blue-700 dark:text-white">
-                        {formatCurrency(record.prices)}
+                        {record?.category_prices
+                          ? formatCurrency(record.category_prices)
+                          : 0}
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
+                        {record.category_year}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white">
-                        {record?.created_at
+                        {record?.updated_at
                           ? formatedDate(
-                              new Date(record.created_at),
+                              new Date(record.updated_at),
                               "dd MMM yyyy"
                             )
                           : ""}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white">
                         <div className="flex justify-center gap-2">
-                          {listPermissions.includes("update") && (
+                          {listPermissions?.includes("update") && (
                             <button
-                              onClick={() => onEdit(record)}
+                              onClick={() => onEdit?.(record)}
                               className="p-2 text-white hover:text-gray-100 bg-yellow-500 hover:bg-yellow-400 rounded text-sm"
                             >
                               <PencilIcon />
                             </button>
                           )}
-                          {listPermissions.includes("delete") && (
-                            <button onClick={() => onRemove(record)} className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm">
+                          {listPermissions?.includes("view") && (
+                            <button
+                              onClick={() => onView?.(record)}
+                              className="w-7 h-8 flex items-center justify-center text-slate-500 hover:text-emerald-700 bg-gray-200 hover:bg-slate-300 rounded border border-slate-300"
+                            >
+                              <img
+                                src={IconSvg.IconEye}
+                                className="w-8 h-full object-contain"
+                              />
+                            </button>
+                          )}
+                          {listPermissions?.includes("delete") && (
+                            <button
+                              onClick={() => onRemove?.(record)}
+                              className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm"
+                            >
                               <TrashBinIcon />
                             </button>
                           )}

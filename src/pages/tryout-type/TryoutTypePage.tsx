@@ -30,7 +30,7 @@ export default function TryoutTypePage(){
   const [isEditMode, setIsEditMode] = useState(false);
   const listPermissions = useAppSelector(selectGrantedPermissions);
 
-  const [deleteOrganization] = useDeleteDataMutation();
+  const [deleteData] = useDeleteDataMutation();
 
   const {
     data = {
@@ -67,7 +67,7 @@ export default function TryoutTypePage(){
       )
     ) {
       try {
-        const response = await deleteOrganization(data?.type_id).unwrap();
+        const response = await deleteData(data?.type_id).unwrap();
         toast.success(response?.message);
         refetch?.();
       } catch (error: any) {

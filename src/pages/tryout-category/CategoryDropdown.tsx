@@ -3,14 +3,14 @@ import type React from "react";
 import { Combobox } from "@headlessui/react";
 import type { I_CategoryTryoutDropdownProps } from "../../interfaces/tryoutInterface";
 import { useEffect, useState } from "react";
-import { useFetchCategoryQuery } from "../../services/categoryTryoutApi";
+import { useFetchDataQuery } from "../../services/tryoutCategoryApi";
 
 export const CategoryDropdown: React.FC<I_CategoryTryoutDropdownProps> = ({
   value,
   onChange,
 }) => {
   const [query, setQuery] = useState("");
-  const { data, isLoading, isError, refetch } = useFetchCategoryQuery({
+  const { data, isLoading, isError, refetch } = useFetchDataQuery({
     page: 1,
     limit: 100,
     search: query || undefined,
@@ -29,12 +29,13 @@ export const CategoryDropdown: React.FC<I_CategoryTryoutDropdownProps> = ({
     <Combobox value={value} onChange={(v: any) => onChange(v)}>
       <div className="relative">
         <Combobox.Input
+          aria-label="Assignee"
           className="px-3 py-2 border border-gray-300 rounded text-sm w-full focus:outline-noneshadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           displayValue={(item: any) => item?.name || ""}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Pilih kategori..."
+          placeholder="Pilih Kategori Tryout..."
         />
-        <Combobox.Options className="absolute z-10 w-full mt-0 bg-white border border-gray-200 rounded-md max-h-60 overflow-auto shadow-lg">
+        <Combobox.Options className="absolute z-10 w-full mt-0 bg-white border border-gray-200 rounded-md max-h-60 overflow-auto shadow-lg" >
           {isLoading && (
             <div className="px-4 py-2 text-sm text-gray-500">Memuat...</div>
           )}
@@ -55,7 +56,7 @@ export const CategoryDropdown: React.FC<I_CategoryTryoutDropdownProps> = ({
                 value={item}
                 className={({ active }) =>
                   `cursor-pointer px-4 py-2 text-sm ${
-                    active ? "bg-blue-100 text-blue-900" : "text-gray-700"
+                    active ? "bg-blue-100 text-blue-900" : "text-slate-700"
                   }`
                 }
               >

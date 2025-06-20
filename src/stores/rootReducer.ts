@@ -18,6 +18,7 @@ import { organizationApi } from '../services/organizationApi';
 import { tryoutCategoryApi } from '../services/tryoutCategoryApi';
 import { tryoutStageApi } from '../services/tryoutStageApi';
 import { tryoutTypeApi } from '../services/tryoutTypeApi';
+import { tryoutPackageApi } from '../services/tryoutPackageApi';
 
 const persistConfig = {
   key: 'root',
@@ -42,7 +43,8 @@ const rootReducer = combineReducers({
   [organizationApi.reducerPath]: organizationApi.reducer,
   [tryoutCategoryApi.reducerPath]: tryoutCategoryApi.reducer,
   [tryoutStageApi.reducerPath]: tryoutStageApi.reducer,
-  [tryoutTypeApi.reducerPath]: tryoutTypeApi.reducer
+  [tryoutTypeApi.reducerPath]: tryoutTypeApi.reducer,
+  [tryoutPackageApi.reducerPath]: tryoutPackageApi.reducer
 });
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);

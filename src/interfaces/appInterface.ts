@@ -69,6 +69,7 @@ export interface I_TableProperties {
   orderName: "asc" | "desc";
   onEdit?: (data: any) => void;
   onRemove?: (data: any) => void;
+  onView?:(data: any) => void;
   onSuccess?: (message: string) => void; 
   onError?: (message: string) => void;
   onSortRow?: (data: any) => void;

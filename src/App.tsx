@@ -18,10 +18,10 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import { useSelector } from "react-redux";
 import type { RootState } from "./stores/rootReducer";
 import { MenuPage } from "./pages/menu";
-import { TryoutPackage } from "./pages/tryout-package";
+import { TryoutPackagePage, TryoutPackageView } from "./pages/tryout-package";
 import { HistoryTryoutPage } from "./pages/history-tryout";
 import { OrganizationPage } from "./pages/organization";
-import { TryoutCategoryPage } from "./pages/tryout-category";
+import { TryoutCategoryPage, TryoutCategoryView } from "./pages/tryout-category";
 import { TryoutStagePage } from "./pages/tryout-stage";
 import { TryoutTypePage } from "./pages/tryout-type";
 
@@ -78,7 +78,7 @@ const App = () => {
               path="/profile"
               element={<PrivateRoute requiredPermission="read" />}
             >
-              <Route index element={< ProfilePage />} />
+              <Route index element={<ProfilePage />} />
             </Route>
 
             {/* Configuration */}
@@ -125,7 +125,17 @@ const App = () => {
               element={<PrivateRoute requiredPermission="read" />}
             >
               <Route index element={<TryoutCategoryPage />} />
+              <Route
+                path="view"
+                element={
+                  <PrivateRoute requiredPermission="view">
+                    <TryoutCategoryView />
+                  </PrivateRoute>
+                }
+              />
             </Route>
+
+
 
             {/* Tryout Stage */}
             <Route
@@ -147,17 +157,22 @@ const App = () => {
               path="/tryout-packages"
               element={<PrivateRoute requiredPermission="read" />}
             >
-              <Route index element={<TryoutPackage />} />
+              <Route index element={<TryoutPackagePage />} />
+              <Route
+                path="view"
+                element={
+                  <PrivateRoute requiredPermission="view">
+                    <TryoutPackageView />
+                  </PrivateRoute>
+                }
+              />
             </Route>
 
             <Route
               path="/history-import-tryout"
               element={<PrivateRoute requiredPermission="read" />}
             >
-              <Route
-                index
-                element={<HistoryTryoutPage />}
-              />
+              <Route index element={<HistoryTryoutPage />} />
             </Route>
           </Route>
         </Routes>

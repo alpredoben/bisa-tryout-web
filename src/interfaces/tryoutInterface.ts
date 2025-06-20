@@ -36,6 +36,10 @@ export interface I_OrganizationDropdownProps {
   className?: string;
 }
 
+export interface I_TryoutPackageInput {
+  category_id: any;
+  stage_id: any;
+}
 
 
 
@@ -47,9 +51,12 @@ export interface I_CategoryTryoutDropdownProps {
   className?: string;
 }
 
-export interface I_TryoutPackageInput {
-  name: string;
-  description: string;
-  category_id?: any;
-  prices: number;
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export interface I_StageTryoutDropdownProps {
+  value: { stage_id: string; name: string } | null;
+  onChange: (selected: { stage_id: string; name: string } | null) => void;
+  label?: string;
+  className?: string;
 }
+

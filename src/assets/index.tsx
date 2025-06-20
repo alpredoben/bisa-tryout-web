@@ -5,6 +5,7 @@ import ExamBro from './icon/Exams-bro.svg';
 import LogoCPNS from './icon/tryout-cpns.png'
 import LogoUpCareer from './icon/carrer-up.png'
 import LogoBUMN from './icon/bumn-indo.png'
+import IconEye from './icon/eye-svgrepo-com.svg'
 
 
 export const IconSvg = {
@@ -15,4 +16,5 @@ export const IconSvg = {
   LogoCPNS,
   LogoUpCareer,
   LogoBUMN,
+  IconEye
 }

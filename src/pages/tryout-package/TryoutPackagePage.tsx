@@ -1,39 +1,52 @@
+/* eslint-disable no-empty */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import { BreadCrumb } from "../../components/common/BreadCrumb";
 import { ComponentCard } from "../../components/common/ComponentCard";
 import { PageMeta } from "../../components/common/PageMeta";
-import {
-  useDeleteCategoryMutation,
-  useFetchCategoryQuery,
-} from "../../services/categoryTryoutApi";
-import CategoryTryoutTable from "./CategoryTryoutTable";
-import { PlusIcon } from "../../assets/icons";
-import { CategoryTryoutModal } from "./CategoryTryoutModal";
 import { useModal } from "../../hooks/useModal";
-import { Slide, toast } from "react-toastify";
 import { useAppSelector } from "../../stores/hooks";
+import { selectGrantedPermissions } from "../../stores/selectors";
+import { Slide, toast } from "react-toastify";
+import {
+  useDeleteDataMutation,
+  useFetchDataQuery,
+} from "../../services/tryoutPackageApi";
+import { PlusIcon } from "../../assets/icons";
+import { CategoryDropdown } from "../tryout-category/CategoryDropdown";
+import { StageDropdown } from "../tryout-stage/StageDropdown";
+import TryoutPackageTable from "./TryoutPackageTable";
+import { TryoutPackageModal } from "./TryoutPackageModal";
+import { useNavigate } from "react-router-dom";
 
 const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100];
 
-const CategoryTryoutPage = () => {
+export default function TryoutPackagePage() {
+  const navigate = useNavigate();
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [searchTextTemp, setSearchTextTemp] = useState("");
   const [searchText, setSearchText] = useState("");
-
   const { isOpen, openModal, closeModal } = useModal();
-  const [directionName, setDirectionName] = useState("created_at");
+  const [directionName, setDirectionName] = useState("updated_at");
   const [orderName, setOrderName] = useState<"asc" | "desc">("desc");
+  const [selectedId, setSelectedId] = useState<any | null>(null);
 
-  const [selectedCategoryId, setSelectedCategoryId] = useState<any | null>(null);
+  const [selectCategory, setSelectCategory] = useState<{
+    category_id: string;
+    name: string;
+  } | null>(null);
+
+  const [selectStage, setSelectStage] = useState<{
+    stage_id: string;
+    name: string;
+  } | null>(null);
+
   const [isEditMode, setIsEditMode] = useState(false);
+  const listPermissions = useAppSelector(selectGrantedPermissions);
 
-  const listPermissions =
-    useAppSelector((state) => state.auth.grantedPermissions) || [];
-
-  const [deleteCategory] = useDeleteCategoryMutation();
+  const [deleteData] = useDeleteDataMutation();
 
   const {
     data = {
@@ -49,16 +62,18 @@ const CategoryTryoutPage = () => {
     isError,
     error,
     refetch,
-  } = useFetchCategoryQuery({
+  } = useFetchDataQuery({
     page,
     limit,
     direction_name: directionName,
     order_name: orderName,
     search: searchText,
+    category_id: selectCategory?.category_id,
+    stage_id: selectStage?.stage_id,
   });
 
   const eventEditHandler = async (data: any) => {
-    setSelectedCategoryId(data?.category_id);
+    setSelectedId(data?.package_id);
     setIsEditMode(true);
     openModal();
   };
@@ -66,27 +81,39 @@ const CategoryTryoutPage = () => {
   const eventDeleteHandler = async (data: any): Promise<void> => {
     if (
       window.confirm(
-        `Apakah kamu yakin ingin menghapus kategori "${data.name}"?`
+        `Apakah kamu yakin ingin menghapus jenis tes "${data.name}" ini?`
       )
     ) {
       try {
-        const response = await deleteCategory(data?.category_id).unwrap();
+        const response = await deleteData(data?.package_id).unwrap();
         toast.success(response?.message);
         refetch?.();
       } catch (error: any) {
-        alert("Gagal menghapus kategori tryout");
+        alert("Gagal menghapus paket tryout");
         console.error(error);
-        toast.error(error?.message);
+        if (error.status === 422) {
+          toast.error(error.data.data[0].message);
+        } else {
+          toast.error(error.data.message);
+        }
       }
     }
   };
+
+  const eventViewHandler = async(data: any): Promise<void> => {
+    navigate('/tryout-packages/view', {
+      state: {
+        packageId: data?.package_id
+      }
+    });
+  }
 
   const eventSearchHandler = () => {
     setSearchText(searchTextTemp);
     setPage(1);
   };
 
-  const eventHandleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const eventLimitChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLimit(Number(e.target.value));
     setPage(1);
   };
@@ -95,26 +122,59 @@ const CategoryTryoutPage = () => {
     setSearchTextTemp(e.target.value);
   };
 
+  const eventAddHandler = (_e: React.ChangeEvent<HTMLInputElement>) => {
+    openModal();
+  };
+
+  const eventRowSortHandler = (column: string | undefined) => {
+    if (!column) return;
+
+    if (directionName === column) {
+      setOrderName(orderName === "asc" ? "desc" : "asc");
+    } else {
+      setDirectionName(column);
+      setOrderName("asc");
+    }
+  };
+
+  const eventSelectCategoryHandler = (value: any) => {
+    setSelectCategory({
+      ...selectCategory,
+      category_id: value?.category_id,
+      name: value?.name,
+    });
+    setPage(1);
+  };
+
+  const eventSelectStageHandler = (value: any) => {
+    setSelectStage({
+      ...selectStage,
+      stage_id: value?.stage_id,
+      name: value?.name,
+    });
+    setPage(1);
+  };
+
   return (
     <>
       <PageMeta
-        title="Master Tryout | Kategori Tryout"
-        description="This is category tryout page in admin panel"
+        title="Master Tryout | Paket Tryout"
+        description="This is master tryout stage on admin panel"
       />
 
-      <BreadCrumb pageTitle="KATEGORI TRYOUT" />
+      <BreadCrumb pageTitle="PAKET TRYOUT" />
       <div className="space-y-6">
-        <ComponentCard title="MASTER DATA KATEGORI TRYOUT">
+        <ComponentCard title="MASTER PAKET TRYOUT">
           {/* Top Controls */}
           <div className="flex flex-wrap items-center gap-4 w-full sm:flex-nowrap mt-10">
             {/* Limit Dropdown */}
-            <div className="basis-1/12">
+            <div className="min-w-16 max-w-sm">
               <label className="block -mt-5 mb-1 text-sm font-medium text-gray-700">
                 Limit
               </label>
               <select
                 value={limit}
-                onChange={eventHandleLimitChange}
+                onChange={eventLimitChangeHandler}
                 className="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary w-full"
               >
                 {LIMITS.map((val) => (
@@ -125,13 +185,38 @@ const CategoryTryoutPage = () => {
               </select>
             </div>
 
-            <div className="basis-5/12">&nbsp;</div>
+            <div className="min-w-14 max-w-sm">&nbsp;</div>
 
-            <div className="basis-8/12">
-              {/* Search & Tambah Button */}
+            <div className="min-w-full">
               <div className="flex flex-wrap items-center gap-4 w-full sm:flex-nowrap">
+                {/* Select Category */}
+                <div className="w-full">
+                  <div className="w-full">
+                    <label className="block -mt-5 mb-1 text-sm font-medium text-gray-700">
+                      Kategori Tryout
+                    </label>
+                    <CategoryDropdown
+                      value={selectCategory}
+                      onChange={eventSelectCategoryHandler}
+                    />
+                  </div>
+                </div>
+
+                {/* Select Stage */}
+                <div className="w-full">
+                  <div className="w-full">
+                    <label className="block -mt-5 mb-1 text-sm font-medium text-gray-700">
+                      Jenis Tes
+                    </label>
+                    <StageDropdown
+                      value={selectStage}
+                      onChange={eventSelectStageHandler}
+                    />
+                  </div>
+                </div>
+
                 {/* Search Input */}
-                <div className="basis-8/12">
+                <div className="w-full">
                   <div className="w-full">
                     <label className="block -mt-5 mb-1 text-sm font-medium text-gray-700">
                       Pencarian
@@ -140,16 +225,16 @@ const CategoryTryoutPage = () => {
                       type="text"
                       value={searchTextTemp}
                       onChange={eventSearchChangeHandler}
-                      placeholder="Cari nama kategori"
+                      placeholder="Cari..."
                       className="px-3 py-2 border border-gray-300 rounded text-sm w-full focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 {/* Buttons */}
-                <div className="basis-4/12">
-                  <div className="w-full flex flex-row gap-3">
-                    <div className="basis-1/2 mt-1">
+                <div className="w-full">
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="w-full sm:w-auto mt-1">
                       <button
                         onClick={eventSearchHandler}
                         className="bg-slate-500 w-full hover:bg-slate-700 text-white px-4 py-2.5 gap-2 rounded text-sm"
@@ -158,13 +243,13 @@ const CategoryTryoutPage = () => {
                       </button>
                     </div>
 
-                    <div className="basis-1/2 mt-1">
+                    <div className="w-full sm:w-auto mt-1">
                       {listPermissions.includes("create") ? (
                         <button
-                          onClick={openModal}
+                          onClick={(e: any) => eventAddHandler(e)}
                           className="bg-blue-500 w-full hover:bg-blue-700 text-white px-4 py-2.5 rounded text-sm whitespace-nowrap"
                         >
-                          <div className="flex flex-row gap-1 justify-center">
+                          <div className="flex flex-row gap-1">
                             <span className="py-0.5">
                               <PlusIcon />
                             </span>
@@ -188,7 +273,7 @@ const CategoryTryoutPage = () => {
               Error: {(error as any)?.data?.message || "Failed to load data"}
             </p>
           ) : (
-            <CategoryTryoutTable
+            <TryoutPackageTable
               search={searchText}
               datatable={data}
               page={page}
@@ -197,10 +282,10 @@ const CategoryTryoutPage = () => {
               setLimit={setLimit}
               orderName={orderName}
               directionName={directionName}
-              setOrderName={setOrderName}
-              setDirectionName={setDirectionName}
+              onSortRow={eventRowSortHandler}
               onEdit={eventEditHandler}
               onRemove={eventDeleteHandler}
+              onView={eventViewHandler}
               onSuccess={(message: string) => {
                 toast.success(message, { transition: Slide });
               }}
@@ -214,19 +299,24 @@ const CategoryTryoutPage = () => {
         </ComponentCard>
       </div>
 
-      {/* Modal Tambah */}
-      <CategoryTryoutModal
+      <TryoutPackageModal
+        key={
+          isOpen
+            ? `modal-${isEditMode}-${selectedId ? selectedId : ""}`
+            : "modal-closed"
+        }
         isOpen={isOpen}
         closeModal={closeModal}
-        selectedCategoryId={selectedCategoryId}
         isEditMode={isEditMode}
-        refetchTable={refetch}
+        selectedId={selectedId}
+        refetchData={refetch}
         onSuccess={(message: string) => {
+          toast.success(message, { transition: Slide });
+        }}
+        onError={(message: string) => {
           toast.success(message, { transition: Slide });
         }}
       />
     </>
   );
-};
-
-export default CategoryTryoutPage;
+}

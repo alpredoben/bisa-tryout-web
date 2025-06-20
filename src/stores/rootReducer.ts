@@ -11,10 +11,14 @@ import { menuApi } from '../services/menuApi';
 import { permissionApi } from '../services/permissionApi';
 import { filesApi } from '../services/fileApi';
 import { userApi } from '../services/userApi';
-import { categoryTryoutApi } from '../services/categoryTryoutApi';
 import { packageTryoutApi } from '../services/packageTryoutApi';
 import { historyTryoutApi } from '../services/historyTryoutApi';
 import { questionTypeApi } from '../services/questionTypeApi';
+import { organizationApi } from '../services/organizationApi';
+import { tryoutCategoryApi } from '../services/tryoutCategoryApi';
+import { tryoutStageApi } from '../services/tryoutStageApi';
+import { tryoutTypeApi } from '../services/tryoutTypeApi';
+import { tryoutPackageApi } from '../services/tryoutPackageApi';
 
 const persistConfig = {
   key: 'root',
@@ -33,10 +37,14 @@ const rootReducer = combineReducers({
   [permissionApi.reducerPath]: permissionApi.reducer,
   [filesApi.reducerPath]: filesApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
-  [categoryTryoutApi.reducerPath]: categoryTryoutApi.reducer,
   [packageTryoutApi.reducerPath]: packageTryoutApi.reducer,
   [historyTryoutApi.reducerPath]: historyTryoutApi.reducer,
-  [questionTypeApi.reducerPath]: questionTypeApi.reducer
+  [questionTypeApi.reducerPath]: questionTypeApi.reducer,
+  [organizationApi.reducerPath]: organizationApi.reducer,
+  [tryoutCategoryApi.reducerPath]: tryoutCategoryApi.reducer,
+  [tryoutStageApi.reducerPath]: tryoutStageApi.reducer,
+  [tryoutTypeApi.reducerPath]: tryoutTypeApi.reducer,
+  [tryoutPackageApi.reducerPath]: tryoutPackageApi.reducer
 });
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);

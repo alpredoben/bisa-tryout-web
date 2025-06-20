@@ -67,12 +67,12 @@ export interface I_TableProperties {
   setLimit: (value: number) => void;
   directionName: string;
   orderName: "asc" | "desc";
-  setDirectionName: (value: string) => void;
-  setOrderName: (value: "asc" | "desc") => void;
   onEdit?: (data: any) => void;
   onRemove?: (data: any) => void;
+  onView?:(data: any) => void;
   onSuccess?: (message: string) => void; 
   onError?: (message: string) => void;
+  onSortRow?: (data: any) => void;
   refetchTable?: () => void;
   listPermissions?: any[]
 }

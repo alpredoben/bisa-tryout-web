@@ -9,10 +9,14 @@ import { menuApi } from '../services/menuApi';
 import { permissionApi } from '../services/permissionApi';
 import { filesApi } from '../services/fileApi';
 import { userApi } from '../services/userApi';
-import { categoryTryoutApi } from '../services/categoryTryoutApi';
 import { packageTryoutApi } from '../services/packageTryoutApi';
 import { historyTryoutApi } from '../services/historyTryoutApi';
 import { questionTypeApi } from '../services/questionTypeApi';
+import { organizationApi } from '../services/organizationApi';
+import { tryoutCategoryApi } from '../services/tryoutCategoryApi';
+import { tryoutStageApi } from '../services/tryoutStageApi';
+import { tryoutTypeApi } from '../services/tryoutTypeApi';
+import { tryoutPackageApi } from '../services/tryoutPackageApi';
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -26,10 +30,14 @@ export const store = configureStore({
       permissionApi.middleware,
       filesApi.middleware,
       userApi.middleware,
-      categoryTryoutApi.middleware,
       packageTryoutApi.middleware,
       historyTryoutApi.middleware,
-      questionTypeApi.middleware
+      questionTypeApi.middleware,
+      organizationApi.middleware,
+      tryoutCategoryApi.middleware,
+      tryoutStageApi.middleware,
+      tryoutTypeApi.middleware,
+      tryoutPackageApi.middleware
     ),
 });
 

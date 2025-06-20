@@ -18,9 +18,12 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import { useSelector } from "react-redux";
 import type { RootState } from "./stores/rootReducer";
 import { MenuPage } from "./pages/menu";
-import { TryoutPackage } from "./pages/tryout-package";
-import { CategoryTryoutPage } from "./pages/category-tryout";
+import { TryoutPackagePage, TryoutPackageView } from "./pages/tryout-package";
 import { HistoryTryoutPage } from "./pages/history-tryout";
+import { OrganizationPage, OrganizationView } from "./pages/organization";
+import { TryoutCategoryPage, TryoutCategoryView } from "./pages/tryout-category";
+import { TryoutStagePage, TryoutStageView } from "./pages/tryout-stage";
+import { TryoutTypePage, TryoutTypeView } from "./pages/tryout-type";
 
 const App = () => {
   // Mengambil status autentikasi dari Redux store
@@ -75,7 +78,7 @@ const App = () => {
               path="/profile"
               element={<PrivateRoute requiredPermission="read" />}
             >
-              <Route index element={< ProfilePage />} />
+              <Route index element={<ProfilePage />} />
             </Route>
 
             {/* Configuration */}
@@ -100,6 +103,7 @@ const App = () => {
               <Route index element={<PermissionPage />} />
             </Route>
 
+            {/* Master User */}
             <Route
               path="/master-user"
               element={<PrivateRoute requiredPermission="read" />}
@@ -107,28 +111,96 @@ const App = () => {
               <Route index element={<UserPage />} />
             </Route>
 
+            {/* Organization */}
+            <Route
+              path="/organization"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<OrganizationPage />} />
+              <Route
+                path="view"
+                element={
+                  <PrivateRoute requiredPermission="view">
+                    <OrganizationView />
+                  </PrivateRoute>
+                }
+              />
+            </Route>
+
+
+            {/* Tryout Category */}
             <Route
               path="/tryout-categories"
               element={<PrivateRoute requiredPermission="read" />}
             >
-              <Route index element={<CategoryTryoutPage />} />
+              <Route index element={<TryoutCategoryPage />} />
+              <Route
+                path="view"
+                element={
+                  <PrivateRoute requiredPermission="view">
+                    <TryoutCategoryView />
+                  </PrivateRoute>
+                }
+              />
             </Route>
+
+
+
+            {/* Tryout Stage */}
+            <Route
+              path="/tryout-stages"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<TryoutStagePage />} />
+              <Route
+                path="view"
+                element={
+                  <PrivateRoute requiredPermission="view">
+                    <TryoutStageView />
+                  </PrivateRoute>
+                }
+              />
+            </Route>
+
+
+
+            {/* Tryout Type */}
+            <Route
+              path="/tryout-types"
+              element={<PrivateRoute requiredPermission="read" />}
+            >
+              <Route index element={<TryoutTypePage />} />
+              <Route
+                path="view"
+                element={
+                  <PrivateRoute requiredPermission="view">
+                    <TryoutTypeView />
+                  </PrivateRoute>
+                }
+              />
+            </Route>
+
 
             <Route
               path="/tryout-packages"
               element={<PrivateRoute requiredPermission="read" />}
             >
-              <Route index element={<TryoutPackage />} />
+              <Route index element={<TryoutPackagePage />} />
+              <Route
+                path="view"
+                element={
+                  <PrivateRoute requiredPermission="view">
+                    <TryoutPackageView />
+                  </PrivateRoute>
+                }
+              />
             </Route>
 
             <Route
               path="/history-import-tryout"
               element={<PrivateRoute requiredPermission="read" />}
             >
-              <Route
-                index
-                element={<HistoryTryoutPage />}
-              />
+              <Route index element={<HistoryTryoutPage />} />
             </Route>
           </Route>
         </Routes>

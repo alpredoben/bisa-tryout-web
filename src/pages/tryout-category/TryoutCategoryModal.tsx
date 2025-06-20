@@ -1,96 +1,82 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { Modal } from "../../components/ui/modal";
 import type { I_ModalProps } from "../../interfaces/appInterface";
 import {
   useCreateDataMutation,
   useFindDataByIdQuery,
   useUpdateDataMutation,
-} from "../../services/tryoutPackageApi";
-import { CategoryDropdown } from "../tryout-category/CategoryDropdown";
-import { StageDropdown } from "../tryout-stage/StageDropdown";
+} from "../../services/tryoutCategoryApi";
+import type { I_TryoutCategoryInput } from "../../interfaces/tryoutInterface";
+import { Modal } from "../../components/ui/modal";
+import { OrganizationDropdown } from "../organization/OrganizationDropdown";
 
-export function TryoutPackageModal({
+export function TryoutCategoryModal({
   isOpen,
   closeModal,
   isEditMode = false,
   selectedId = null,
   refetchData,
   onSuccess,
-  onError,
+  onError
 }: I_ModalProps) {
-  const [formData, setFormData] = useState({
-    category_id: "",
-    stage_id: "",
-    order_number: 1,
-    total_questions: 0,
+  const [formData, setFormData] = useState<I_TryoutCategoryInput>({
+    name: "",
+    description: "",
+    organization_id: null,
+    prices: 0,
+    year: null,
   });
+
+  const [selectedOrganization, setSelectedOrganization] = useState<{
+    organization_id: any | null;
+    name: string;
+  } | null>(null);
 
   const { data: rowData } = useFindDataByIdQuery(selectedId!, {
     skip: !isEditMode || !selectedId,
   });
 
-  const [selectCategory, setSelectCategory] = useState<{
-    category_id: any;
-    name: string;
-  } | null>(null);
-
-  const [selectStage, setSelectStage] = useState<{
-    stage_id: any;
-    name: string;
-  } | null>(null);
-
   const [createData, { isLoading: isCreating }] = useCreateDataMutation();
   const [updateData, { isLoading: isUpdating }] = useUpdateDataMutation();
 
-  const resetModalForm = () => {
+  const resetFormModal = () => {
     setFormData({
       ...formData,
-      category_id: "",
-      stage_id: "",
-      order_number: 1,
-      total_questions: 0,
-    });
-
-    setSelectCategory({
-      ...selectCategory,
-      category_id: null,
       name: "",
+      description: "",
+      organization_id: null,
+      prices: 0,
+      year: null,
     });
 
-    setSelectStage({
-      ...selectStage,
-      stage_id: null,
+    setSelectedOrganization({
+      ...selectedOrganization,
+      organization_id: null,
       name: "",
     });
   };
 
   useEffect(() => {
     if (isOpen) {
-      resetModalForm();
+      resetFormModal();
     }
 
     if (isEditMode && rowData) {
       setFormData((prev) => ({
         ...prev,
-        category_id: rowData?.category_id,
-        stage_id: rowData?.stage_id,
-        order_number: rowData?.order_number ? rowData.order_number : 0,
-        total_questions: rowData?.total_questions ? rowData.total_questions : 0,
+        name: rowData?.name,
+        organization_id: rowData?.organization.organization_id,
+        description: rowData?.description,
+        prices: rowData?.prices || 0,
+        year: rowData?.year,
       }));
 
-      setSelectCategory((prev) => ({
+      setSelectedOrganization((prev) => ({
         ...prev,
-        category_id: rowData?.category?.category_id || null,
-        name: rowData?.category?.name || "",
-      }));
-
-      setSelectStage((prev) => ({
-        ...prev,
-        stage_id: rowData?.category?.category_id || null,
-        name: rowData?.stage?.name || "",
+        organization_id: rowData?.organization.organization_id,
+        name: rowData?.organization?.name || "",
       }));
     }
   }, [rowData, isEditMode, isOpen]);
@@ -103,13 +89,28 @@ export function TryoutPackageModal({
     });
   };
 
+  const eventSelectChangeHandler = (value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      organization_id: value.organization_id,
+    }));
+
+    setSelectedOrganization({
+      ...selectedOrganization,
+      organization_id: value?.organization_id,
+      name: value?.name,
+    });
+  };
+
   const eventCloseModalHandler = () => {
-    resetModalForm();
+    resetFormModal();
     closeModal();
   };
 
   const eventSubmitHandler = async (e: any) => {
     e.preventDefault();
+
+    console.log({formData})
     try {
       let message: string = "";
       if (isEditMode) {
@@ -127,44 +128,17 @@ export function TryoutPackageModal({
       eventCloseModalHandler();
       onSuccess?.(message);
     } catch (error: any) {
-      console.log("Error submit tryout package", error);
-      if (error.status === 422) {
-        onError?.(error.data.data[0].message);
-      } else {
+      console.log("Error submit tryout category", error);
+      if(error.status === 422) {
+        onError?.(error.data.data[0].message)
+      }
+      else {
         onError?.(error.data.message);
       }
     }
   };
 
-  const eventSelectCategoryHandler = (value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      category_id: value.category_id,
-    }));
-
-    setSelectCategory({
-      ...selectCategory,
-      category_id: value?.category_id,
-      name: value?.name,
-    });
-  };
-
-  const eventSelectStageHandler = (value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      stage_id: value.stage_id,
-    }));
-
-    setSelectStage({
-      ...selectStage,
-      stage_id: value?.stage_id,
-      name: value?.name,
-    });
-  };
-
   if (!isOpen) return null;
-
-  console.log({formData})
 
   return (
     <Modal
@@ -175,81 +149,104 @@ export function TryoutPackageModal({
       <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
         <div>
           <h5 className="font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl mb-4">
-            {isEditMode ? "Ubah Paket Tryout" : "Tambah Paket Tryout"}
+            {isEditMode ? "Ubah Kategori Tryout" : "Tambah Kategori Tryout"}
           </h5>
         </div>
 
         <div className="space-y-4">
+          {/* Name */}
           <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
             <label
               htmlFor="name"
               className="py-4 text-sm font-medium text-gray-700 w-[150px]"
             >
-              Kategori Tryout
+              Nama
             </label>
-
-            <CategoryDropdown
-              value={selectCategory}
-              onChange={eventSelectCategoryHandler}
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={(e) => eventInputChangeHandler(e)}
+              className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+              placeholder="Masukkan Nama Kategori Tryout...."
             />
           </div>
 
+          {/* Description */}
           <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
             <label
               htmlFor="description"
               className="py-3 text-sm font-medium text-gray-700 w-[150px]"
             >
-              Jenis Tes
+              Keterangan
             </label>
 
-            <StageDropdown
-              value={selectStage}
-              onChange={eventSelectStageHandler}
+            <textarea
+              id="description"
+              name="description"
+              className="mt-1 w-full h-32 resize-none border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+              value={formData.description}
+              onChange={(e) => eventInputChangeHandler(e)}
+              placeholder="Keterangan ..."
             />
           </div>
 
-          {/* Nomor Urut */}
+          {/* Prices */}
+          <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
+            <label
+              htmlFor="prices"
+              className="py-3 text-sm font-medium text-gray-700 w-[150px]"
+            >
+              Prices
+            </label>
+            <input
+              id="prices"
+              name="prices"
+              type="text"
+              value={formData?.prices}
+              onChange={(e) => eventInputChangeHandler(e)}
+              className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+              placeholder="Masukkan Harga..."
+            />
+          </div>
+
+          {/* Name */}
           <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
             <label
               htmlFor="name"
               className="py-4 text-sm font-medium text-gray-700 w-[150px]"
             >
-              No. Urut
+              Tahun
             </label>
             <input
-              id="order_number"
-              name="order_number"
-              type="number"
-              value={formData.order_number}
+              id="year"
+              name="year"
+              type="text"
+              value={formData.year}
               onChange={(e) => eventInputChangeHandler(e)}
               className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
-              placeholder="Masukkan No. Urut...."
+              placeholder="Tahun...."
             />
           </div>
 
-          {/* Total Soal */}
           <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
             <label
-              htmlFor="name"
-              className="py-4 text-sm font-medium text-gray-700 w-[150px]"
+              htmlFor="parent_id"
+              className="py-3 text-sm font-medium text-gray-700 w-[150px]"
             >
-              Total Soal
+              Organisasi
             </label>
-            <input
-              id="total_questions"
-              name="total_questions"
-              type="number"
-              value={formData.total_questions}
-              onChange={(e) => eventInputChangeHandler(e)}
-              className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
-              placeholder="Masukkan No. Urut...."
+            <OrganizationDropdown
+              value={selectedOrganization}
+              onChange={eventSelectChangeHandler}
             />
           </div>
         </div>
         <div className="flex items-center gap-3 mt-6 modal-footer sm:justify-end">
           <button
             type="button"
-            onClick={() => eventCloseModalHandler()}
+            onClick={closeModal}
             className="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] sm:w-auto"
           >
             Batal

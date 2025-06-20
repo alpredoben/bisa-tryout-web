@@ -29,8 +29,13 @@ const Sidebar: React.FC = () => {
 
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+  // const isActive = useCallback(
+  //   (path: string) => location.pathname === path,
+  //   [location.pathname]
+  // );
+
   const isActive = useCallback(
-    (path: string) => location.pathname === path,
+    (path: string) => location.pathname === path || location.pathname.startsWith(path + "/"),
     [location.pathname]
   );
 
@@ -136,7 +141,7 @@ const Sidebar: React.FC = () => {
                 <ChevronDownIcon
                   className={`ml-auto w-5 h-5 transition-transform duration-200 ${
                     openSubmenu?.index === index
-                      ? "rotate-180 text-brand-500"
+                      ? "rotate-180 text-brand-700"
                       : ""
                   }`}
                 />
@@ -207,7 +212,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <aside
-      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-teal-200 dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-emerald-200 
         ${
           isExpanded || isMobileOpen
             ? "w-[290px]"

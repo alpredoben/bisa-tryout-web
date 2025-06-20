@@ -1,1 +1,2 @@
-export {default as TryoutPackage} from './TryoutPackage'
+export {default as TryoutPackagePage} from './TryoutPackagePage'
+export {default as TryoutPackageView} from './TryoutPackageView'

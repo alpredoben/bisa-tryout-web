@@ -13,10 +13,12 @@ import { useDeleteDataMutation, useFetchDataQuery } from "../../services/organiz
 import { PlusIcon } from "../../assets/icons";
 import OrganizationTable from "./OrganizationTable";
 import { OrganizationModal } from "./OrganizationModal";
+import { useNavigate } from "react-router-dom";
 
 const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100];
 
 export default function OrganizationPage(){
+  const navigate = useNavigate();
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [searchTextTemp, setSearchTextTemp] = useState("");
@@ -111,6 +113,14 @@ export default function OrganizationPage(){
       setOrderName("asc");
     }
   };
+
+  const eventViewHandler = async(data: any): Promise<void> => {
+    navigate('/organization/view', {
+      state: {
+        organizationId: data?.organization_id
+      }
+    });
+  }
 
   return (
     <>
@@ -219,6 +229,7 @@ export default function OrganizationPage(){
               onSortRow={eventRowSortHandler}
               onEdit={eventEditHandler}
               onRemove={eventDeleteHandler}
+              onView={eventViewHandler}
               onSuccess={(message: string) => {
                 toast.success(message, { transition: Slide });
               }}

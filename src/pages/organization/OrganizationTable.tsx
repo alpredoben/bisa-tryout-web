@@ -1,4 +1,4 @@
-
+import { IconSvg } from "../../assets";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -16,36 +16,36 @@ import type {
   I_TableHeaders,
   I_TableProperties,
 } from "../../interfaces/appInterface";
-import {  formatedDate } from "../../utils/helpers";
+import { formatedDate } from "../../utils/helpers";
 
 const tableHeaders: I_TableHeaders[] = [
   {
     id: 1,
     title: "No",
-    className: 'justify-center'
+    className: "justify-center",
   },
   {
     id: 2,
     title: "Nama",
     name: "name",
-    className: 'justify-center'
+    className: "justify-center",
   },
   {
     id: 3,
     title: "Keterangan",
     name: "description",
-    className: 'justify-center'
+    className: "justify-center",
   },
   {
     id: 4,
     title: "Dibuat",
     name: "updated_at",
-    className: 'justify-center'
+    className: "justify-center",
   },
   {
     id: 5,
     title: "Action",
-    className: 'justify-center'
+    className: "justify-center",
   },
 ];
 
@@ -58,7 +58,8 @@ export default function OrganizationTable({
   orderName,
   directionName,
   onRemove,
-  onSortRow
+  onView,
+  onSortRow,
 }: I_TableProperties) {
   const { records, total_page, total_row, limit } = datatable;
 
@@ -100,22 +101,26 @@ export default function OrganizationTable({
                         key={item.id}
                         isHeader
                         className={`px-2 py-3 font-bold text-white text-theme-sm dark:text-white cursor-pointer bg-slate-800 border border-white`}
-                        onClick={() =>
-                          isSortable && onSortRow?.(item.name)
-                        }
+                        onClick={() => isSortable && onSortRow?.(item.name)}
                       >
-                        <div className={`flex flex-row items-start py-0 px-0 ${item.className}`}>
-                          <div className={`${isSortable && isActive ? "basis-3/4" : "basis-4/4"}`}>
+                        <div
+                          className={`flex flex-row items-start py-0 px-0 ${item.className}`}
+                        >
+                          <div
+                            className={`${
+                              isSortable && isActive ? "basis-3/4" : "basis-4/4"
+                            }`}
+                          >
                             {item.title.toUpperCase()}
                           </div>
-                          
+
                           {isSortable && isActive && (
                             <div className="basis-1/4">
                               {orderName === "asc" ? (
-                                  <ArrowUpIcon />
-                                ) : (
-                                  <ArrowDownIcon />
-                                )}
+                                <ArrowUpIcon />
+                              ) : (
+                                <ArrowDownIcon />
+                              )}
                             </div>
                           )}
                         </div>
@@ -129,9 +134,12 @@ export default function OrganizationTable({
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {records.length > 0 ? (
                   records.map((record, index) => (
-                    <TableRow key={record.organization_id || index} className={`${
-                      (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white" 
-                    }`}>
+                    <TableRow
+                      key={record.organization_id || index}
+                      className={`${
+                        (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white"
+                      }`}
+                    >
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
                         {(page - 1) * limit + index + 1}
                       </TableCell>
@@ -159,8 +167,22 @@ export default function OrganizationTable({
                               <PencilIcon />
                             </button>
                           )}
+                          {listPermissions?.includes("view") && (
+                            <button
+                              onClick={() => onView?.(record)}
+                              className="w-7 h-8 flex items-center justify-center text-slate-500 hover:text-emerald-700 bg-gray-200 hover:bg-slate-300 rounded border border-slate-300"
+                            >
+                              <img
+                                src={IconSvg.IconEye}
+                                className="w-8 h-full object-contain"
+                              />
+                            </button>
+                          )}
                           {listPermissions?.includes("delete") && (
-                            <button onClick={() => onRemove?.(record)} className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm">
+                            <button
+                              onClick={() => onRemove?.(record)}
+                              className="p-2 text-white hover:text-gray-100 bg-red-500 hover:bg-red-700 rounded text-sm"
+                            >
                               <TrashBinIcon />
                             </button>
                           )}

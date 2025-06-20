@@ -20,7 +20,7 @@ import type { RootState } from "./stores/rootReducer";
 import { MenuPage } from "./pages/menu";
 import { TryoutPackagePage, TryoutPackageView } from "./pages/tryout-package";
 import { HistoryTryoutPage } from "./pages/history-tryout";
-import { OrganizationPage } from "./pages/organization";
+import { OrganizationPage, OrganizationView } from "./pages/organization";
 import { TryoutCategoryPage, TryoutCategoryView } from "./pages/tryout-category";
 import { TryoutStagePage, TryoutStageView } from "./pages/tryout-stage";
 import { TryoutTypePage } from "./pages/tryout-type";
@@ -117,7 +117,16 @@ const App = () => {
               element={<PrivateRoute requiredPermission="read" />}
             >
               <Route index element={<OrganizationPage />} />
+              <Route
+                path="view"
+                element={
+                  <PrivateRoute requiredPermission="view">
+                    <OrganizationView />
+                  </PrivateRoute>
+                }
+              />
             </Route>
+
 
             {/* Tryout Category */}
             <Route

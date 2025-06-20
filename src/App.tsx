@@ -22,7 +22,7 @@ import { TryoutPackagePage, TryoutPackageView } from "./pages/tryout-package";
 import { HistoryTryoutPage } from "./pages/history-tryout";
 import { OrganizationPage } from "./pages/organization";
 import { TryoutCategoryPage, TryoutCategoryView } from "./pages/tryout-category";
-import { TryoutStagePage } from "./pages/tryout-stage";
+import { TryoutStagePage, TryoutStageView } from "./pages/tryout-stage";
 import { TryoutTypePage } from "./pages/tryout-type";
 
 const App = () => {
@@ -143,7 +143,17 @@ const App = () => {
               element={<PrivateRoute requiredPermission="read" />}
             >
               <Route index element={<TryoutStagePage />} />
+              <Route
+                path="view"
+                element={
+                  <PrivateRoute requiredPermission="view">
+                    <TryoutStageView />
+                  </PrivateRoute>
+                }
+              />
             </Route>
+
+
 
             {/* Tryout Type */}
             <Route

@@ -13,10 +13,12 @@ import { useDeleteDataMutation, useFetchDataQuery } from "../../services/tryoutS
 import { PlusIcon } from "../../assets/icons";
 import TryoutStageTable from "./TryoutStageTable";
 import { TryoutStageModal } from "./TryoutStageModal";
+import { useNavigate } from "react-router-dom";
 
 const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100];
 
 export default function TryoutStagePage(){
+  const navigate = useNavigate();
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [searchTextTemp, setSearchTextTemp] = useState("");
@@ -82,6 +84,14 @@ export default function TryoutStagePage(){
       }
     }
   };
+
+  const eventViewHandler = async(data: any): Promise<void> => {
+    navigate('/tryout-stages/view', {
+      state: {
+        stageId: data?.stage_id
+      }
+    });
+  }
 
   const eventSearchHandler = () => {
     setSearchText(searchTextTemp);
@@ -218,6 +228,7 @@ export default function TryoutStagePage(){
               onSortRow={eventRowSortHandler}
               onEdit={eventEditHandler}
               onRemove={eventDeleteHandler}
+              onView={eventViewHandler}
               onSuccess={(message: string) => {
                 toast.success(message, { transition: Slide });
               }}

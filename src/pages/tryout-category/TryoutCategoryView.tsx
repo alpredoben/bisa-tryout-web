@@ -17,7 +17,7 @@ const TryoutCategoryView = () => {
     <>
       <PageMeta
         title="Master Tryout | Kategori Tryout"
-        description="This is detail information of tryout package"
+        description="This is detail information of tryout category"
       />
       <BreadCrumb
         pageTitle="KATEGORI TRYOUT"

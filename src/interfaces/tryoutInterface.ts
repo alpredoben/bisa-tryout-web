@@ -37,8 +37,12 @@ export interface I_OrganizationDropdownProps {
 }
 
 export interface I_TryoutPackageInput {
+  package_name: string;
   category_id: any;
   stage_id: any;
+  total_questions: number;
+  order_number: number
+  mode_answer: any
 }
 
 
@@ -67,6 +71,14 @@ export interface I_CategoryTryoutDropdownProps {
 export interface I_StageTryoutDropdownProps {
   value: { stage_id: string; name: string } | null;
   onChange: (selected: { stage_id: string; name: string } | null) => void;
+  label?: string;
+  className?: string;
+}
+
+
+export interface I_PackageDropdownProps {
+  value: { package_id: string; name: string } | null;
+  onChange: (selected: { package_id: string; name: string } | null) => void;
   label?: string;
   className?: string;
 }

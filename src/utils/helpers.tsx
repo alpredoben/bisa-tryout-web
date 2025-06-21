@@ -52,3 +52,17 @@ export const formatCurrency = (value: number, strFormat: string = 'id-ID', ): st
     minimumFractionDigits: 2,
   }).format(value);
 };
+
+export const getListModeAnswer = (typeName: any = null): any => {
+  const items = [
+    {id: 'pilihan-ganda', name: 'Pilihan Berganda'},
+    {id: 'benar-salah', name: 'Benar atau Salah'},
+    {id: 'multi-seleh', name: 'Lebih dari 1 Pilihan'}
+  ];
+
+  if(typeName != null) {
+    return items.find((x) => x.id == typeName)
+  }
+  
+  return items
+}

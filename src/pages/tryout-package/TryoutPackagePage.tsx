@@ -81,7 +81,7 @@ export default function TryoutPackagePage() {
   const eventDeleteHandler = async (data: any): Promise<void> => {
     if (
       window.confirm(
-        `Apakah kamu yakin ingin menghapus jenis tes "${data.name}" ini?`
+        `Apakah kamu yakin ingin menghapus paket "${data.name}" ini?`
       )
     ) {
       try {

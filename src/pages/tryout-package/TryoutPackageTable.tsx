@@ -16,7 +16,8 @@ import type {
   I_TableHeaders,
   I_TableProperties,
 } from "../../interfaces/appInterface";
-import { formatCurrency, formatedDate } from "../../utils/helpers";
+import { formatCurrency, formatedDate, getListModeAnswer } from "../../utils/helpers";
+
 
 const tableHeaders: I_TableHeaders[] = [
   {
@@ -51,12 +52,18 @@ const tableHeaders: I_TableHeaders[] = [
   },
   {
     id: 6,
+    title: "Jenis Jawaban",
+    name: "mode_answer",
+    className: "justify-center",
+  },
+  {
+    id: 7,
     title: "Dibuat",
     name: "updated_at",
     className: "justify-center",
   },
   {
-    id: 7,
+    id: 8,
     title: "Action",
     className: "justify-center",
   },
@@ -169,6 +176,9 @@ export default function TryoutPackageTable({
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
                         {record.category_year}
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
+                        <span className="underline text-emerald-800">{getListModeAnswer(record.mode_answer)?.name?.toUpperCase()}</span>
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white">
                         {record?.updated_at

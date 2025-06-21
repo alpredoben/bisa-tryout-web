@@ -11,6 +11,10 @@ import {
 } from "../../services/tryoutPackageApi";
 import { CategoryDropdown } from "../tryout-category/CategoryDropdown";
 import { StageDropdown } from "../tryout-stage/StageDropdown";
+import { SearchableDropdown } from "../../components/common/SearchableDropdown";
+import { getListModeAnswer } from "../../utils/helpers";
+
+const listModeAnswer = getListModeAnswer()
 
 export function TryoutPackageModal({
   isOpen,
@@ -22,9 +26,11 @@ export function TryoutPackageModal({
   onError,
 }: I_ModalProps) {
   const [formData, setFormData] = useState({
+    package_name: "",
     category_id: "",
     stage_id: "",
     order_number: 1,
+    mode_answer: null,
     total_questions: 0,
   });
 
@@ -48,6 +54,7 @@ export function TryoutPackageModal({
   const resetModalForm = () => {
     setFormData({
       ...formData,
+      package_name: "",
       category_id: "",
       stage_id: "",
       order_number: 1,
@@ -162,6 +169,13 @@ export function TryoutPackageModal({
     });
   };
 
+  const eventDropdownChangeHandler = (value: any) => {
+    setFormData({
+      ...formData,
+      mode_answer: value,
+    });
+  };
+
   if (!isOpen) return null;
 
   console.log({formData})
@@ -180,6 +194,26 @@ export function TryoutPackageModal({
         </div>
 
         <div className="space-y-4">
+          {/* Nomor Urut */}
+          <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
+            <label
+              htmlFor="name"
+              className="py-4 text-sm font-medium text-gray-700 w-[150px]"
+            >
+              Nama Paket
+            </label>
+            <input
+              id="package_name"
+              name="package_name"
+              type="text"
+              value={formData.package_name}
+              onChange={(e) => eventInputChangeHandler(e)}
+              className="mt-1 w-full border border-gray-300 rounded-md shadow-sm  text-sm h-10 focus:ring-primary focus:border-primary"
+              placeholder="Masukkan Nama Paket...."
+            />
+          </div>
+
+
           <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
             <label
               htmlFor="name"
@@ -208,6 +242,23 @@ export function TryoutPackageModal({
             />
           </div>
 
+          <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
+            <label
+              htmlFor="description"
+              className="py-3 text-sm font-medium text-gray-700 w-[150px]"
+            >
+              Jenis Jawaban
+            </label>
+
+            <SearchableDropdown
+              value={formData.mode_answer}
+              onChange={eventDropdownChangeHandler}
+              options={listModeAnswer}
+              isLoading={false}
+              placeholder="Pilih Jenis Jawaban"
+            />
+          </div>
+
           {/* Nomor Urut */}
           <div className="grid grid-cols-[auto,1fr] gap-4 mb-4">
             <label
@@ -222,7 +273,7 @@ export function TryoutPackageModal({
               type="number"
               value={formData.order_number}
               onChange={(e) => eventInputChangeHandler(e)}
-              className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+              className="mt-1 w-full border border-gray-300 rounded-md shadow-sm  text-sm h-10 focus:ring-primary focus:border-primary"
               placeholder="Masukkan No. Urut...."
             />
           </div>
@@ -241,7 +292,7 @@ export function TryoutPackageModal({
               type="number"
               value={formData.total_questions}
               onChange={(e) => eventInputChangeHandler(e)}
-              className="mt-1 w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-primary focus:border-primary"
+              className="mt-1 w-full border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
               placeholder="Masukkan No. Urut...."
             />
           </div>

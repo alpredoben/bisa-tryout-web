@@ -91,7 +91,7 @@ export default function TryoutCategoryPage(){
   const eventDeleteHandler = async (data: any): Promise<void> => {
     if (
       window.confirm(
-        `Apakah kamu yakin ingin menghapus paket tryout "${data.name}"?`
+        `Apakah kamu yakin ingin menghapus kategori tryout "${data.name}"?`
       )
     ) {
       try {

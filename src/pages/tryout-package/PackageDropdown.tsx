@@ -52,7 +52,6 @@ export const PackageDropdown: React.FC<I_PackageDropdownProps> = ({
           )}
           {!isLoading &&
             records.map((item: any) => {
-              console.log({item})
               return (
                 <Combobox.Option
                   key={item.package_id}

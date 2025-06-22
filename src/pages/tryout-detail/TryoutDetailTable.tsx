@@ -16,8 +16,7 @@ import type {
   I_TableHeaders,
   I_TableProperties,
 } from "../../interfaces/appInterface";
-import { formatCurrency, formatedDate, getListModeLayout } from "../../utils/helpers";
-
+import { formatedDate, getListModeAnswer } from "../../utils/helpers";
 
 const tableHeaders: I_TableHeaders[] = [
   {
@@ -27,49 +26,62 @@ const tableHeaders: I_TableHeaders[] = [
   },
   {
     id: 2,
-    title: "Nama Kategori",
-    name: "category_name",
+    title: "Nama Paket",
+    name: "package_name",
     className: "justify-center",
   },
 
   {
     id: 3,
-    title: "Jenis Tes",
-    name: "stage_name",
+    title: "Nama Tipe",
+    name: "type_name",
     className: "justify-center",
   },
   {
     id: 4,
-    title: "Harga",
-    name: "category_prices",
+    title: "Total Soal",
+    name: "total_questions",
     className: "justify-center",
   },
+
   {
     id: 5,
-    title: "Tahun",
-    name: "category_year",
+    title: "Passing Grade",
+    name: "passing_grade",
     className: "justify-center",
   },
   {
     id: 6,
-    title: "Jenis Layout",
-    name: "mode_layout",
+    title: "Durasi",
+    name: "total_duration",
     className: "justify-center",
   },
   {
     id: 7,
+    title: "Satuan",
+    name: "satuan_duration",
+    className: "justify-center",
+  },
+  {
+    id: 8,
+    title: "Jenis Jawaban",
+    name: "mode_answer",
+    className: "justify-center",
+  },
+  {
+    id: 9,
     title: "Dibuat",
     name: "updated_at",
     className: "justify-center",
   },
   {
-    id: 8,
+    id: 10,
     title: "Action",
     className: "justify-center",
   },
 ];
 
-export default function TryoutPackageTable({
+export default function TryoutDetailTable({
   page,
   listPermissions,
   onEdit,
@@ -155,7 +167,7 @@ export default function TryoutPackageTable({
                 {records.length > 0 ? (
                   records.map((record, index) => (
                     <TableRow
-                      key={record.stage_id || index}
+                      key={record.detail_id || index}
                       className={`${
                         (index + 1) % 2 === 0 ? "bg-slate-200" : "bg-white"
                       }`}
@@ -164,21 +176,29 @@ export default function TryoutPackageTable({
                         {(page - 1) * limit + index + 1}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-start text-theme-sm text-slate-700 dark:text-white">
-                        {record.category_name}
+                        {record.package_name}
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white">
+                        {record.type_name}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
-                        {record.stage_name}
-                      </TableCell>
-                      <TableCell className="px-4 py-3 text-end text-theme-sm text-blue-700 dark:text-white">
-                        {record?.category_prices
-                          ? formatCurrency(record.category_prices)
-                          : 0}
+                        {record.total_questions}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
-                        {record.category_year}
+                        {record.passing_grade}
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
-                        <span className="underline text-emerald-800">{getListModeLayout(record.mode_layout)?.name?.toUpperCase()}</span>
+                        {record.total_duration}
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
+                        {record.satuan_duration}
+                      </TableCell>
+                      <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white justify-center">
+                        <span className="underline text-emerald-800">
+                          {getListModeAnswer(
+                            record.mode_answer
+                          )?.name?.toUpperCase()}
+                        </span>
                       </TableCell>
                       <TableCell className="px-4 py-3 text-center text-theme-sm text-slate-700 dark:text-white">
                         {record?.updated_at

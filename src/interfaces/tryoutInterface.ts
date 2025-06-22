@@ -42,7 +42,7 @@ export interface I_TryoutPackageInput {
   stage_id: any;
   total_questions: number;
   order_number: number
-  mode_answer: any
+  mode_layout: any
 }
 
 
@@ -51,9 +51,10 @@ export interface I_TryoutDetailInput {
   type_id: any
   total_questions: number
   total_duration?: number
-  satuan_duration?: string
+  satuan_duration?: any
   passing_grade: number
   order_number: number
+  mode_answer: any
 }
 
 
@@ -83,3 +84,10 @@ export interface I_PackageDropdownProps {
   className?: string;
 }
 
+
+export interface I_TypeTryoutDropdownProps {
+  value: { type_id: string; name: string } | null;
+  onChange: (selected: { type_id: string; name: string } | null) => void;
+  label?: string;
+  className?: string;
+}

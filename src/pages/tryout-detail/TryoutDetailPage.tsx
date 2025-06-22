@@ -5,18 +5,23 @@ import { useNavigate } from "react-router-dom";
 import { useModal } from "../../hooks/useModal";
 import { useAppSelector } from "../../stores/hooks";
 import { selectGrantedPermissions } from "../../stores/selectors";
-import { useDeleteDataMutation, useFetchDataQuery } from "../../services/tryoutDetailApi";
-import { toast } from "react-toastify";
+import {
+  useDeleteDataMutation,
+  useFetchDataQuery,
+} from "../../services/tryoutDetailApi";
+import { Slide, toast } from "react-toastify";
 import { PageMeta } from "../../components/common/PageMeta";
 import { BreadCrumb } from "../../components/common/BreadCrumb";
 import { ComponentCard } from "../../components/common/ComponentCard";
 import { PackageDropdown } from "../tryout-package/PackageDropdown";
 import { PlusIcon } from "../../assets/icons";
+import { TryoutDetailModal } from "./TryoutDetailModal";
+import TryoutDetailTable from "./TryoutDetailTable";
 
 const LIMITS = [5, 10, 15, 20, 25, 50, 75, 100];
 
 export default function TryoutDetailPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [searchTextTemp, setSearchTextTemp] = useState("");
@@ -34,9 +39,7 @@ export default function TryoutDetailPage() {
     name: string;
   } | null>(null);
 
-  const [selectedId, setSelectedId] = useState<
-    any | null
-  >(null);
+  const [selectedId, setSelectedId] = useState<any | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const listPermissions = useAppSelector(selectGrantedPermissions);
 
@@ -71,8 +74,8 @@ export default function TryoutDetailPage() {
       refetch();
     }
 
-    if(selectedType) {
-      refetch()
+    if (selectedType) {
+      refetch();
     }
   }, [selectedPackage, selectedType, refetch]);
 
@@ -91,11 +94,10 @@ export default function TryoutDetailPage() {
     setPage(1);
   };
 
-
   const eventDeleteHandler = async (data: any): Promise<void> => {
     if (
       window.confirm(
-        `Apakah kamu yakin ingin menghapus detail tryout "${data.name}"?`
+        `Apakah kamu yakin ingin menghapus detail tryout "${data.package_name}/${data.type_name}"?`
       )
     ) {
       try {
@@ -104,24 +106,23 @@ export default function TryoutDetailPage() {
         refetch?.();
       } catch (error: any) {
         alert("Gagal menghapus detail tryout");
-        console.error(error);
-        if(error.status === 422) {
-          toast.error(error.data.data[0].message)
-        }
-        else {
+        if (error.status === 422) {
+          toast.error(error.data.data[0].message);
+        } else {
           toast.error(error.data.message);
         }
       }
     }
   };
 
-  const eventViewHandler = async(data: any): Promise<void> => {
-    navigate('/tryout-details/view', {
+  const eventViewHandler = async (data: any): Promise<void> => {
+    console.log({data})
+    navigate("/tryout-details/view", {
       state: {
-        detailId: data?.detail_id
-      }
+        detailId: data?.detail_id,
+      },
     });
-  }
+  };
 
   const eventSearchHandler = () => {
     setSearchText(searchTextTemp);
@@ -138,9 +139,8 @@ export default function TryoutDetailPage() {
   };
 
   const eventAddHandler = (_e: React.ChangeEvent<HTMLInputElement>) => {
-    openModal()
-  }
-
+    openModal();
+  };
 
   const eventRowSortHandler = (column: string | undefined) => {
     if (!column) return;
@@ -152,8 +152,6 @@ export default function TryoutDetailPage() {
       setOrderName("asc");
     }
   };
-
-  console.log({selectedPackage})
 
   return (
     <>
@@ -211,7 +209,7 @@ export default function TryoutDetailPage() {
                       type="text"
                       value={searchTextTemp}
                       onChange={eventSearchChangeHandler}
-                      placeholder="Cari Nama Kategori/Organisasi/Keterangan..."
+                      placeholder="Cari Nama Paket/Tipe..."
                       className="px-3 py-2 border border-gray-300 rounded text-sm w-full focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
@@ -232,7 +230,7 @@ export default function TryoutDetailPage() {
                     <div className="w-full sm:w-auto mt-1">
                       {listPermissions.includes("create") ? (
                         <button
-                          onClick={(e:any) => eventAddHandler(e)}
+                          onClick={(e: any) => eventAddHandler(e)}
                           className="bg-blue-500 w-full hover:bg-blue-700 text-white px-4 py-2.5 rounded text-sm whitespace-nowrap"
                         >
                           <div className="flex flex-row gap-1">
@@ -252,10 +250,57 @@ export default function TryoutDetailPage() {
             </div>
           </div>
 
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : isError ? (
+            <p>
+              Error: {(error as any)?.data?.message || "Failed to load data"}
+            </p>
+          ) : (
+            <TryoutDetailTable
+              search={searchText}
+              datatable={data}
+              page={page}
+              setPage={setPage}
+              limit={limit}
+              setLimit={setLimit}
+              orderName={orderName}
+              directionName={directionName}
+              onSortRow={eventRowSortHandler}
+              onEdit={eventEditHandler}
+              onRemove={eventDeleteHandler}
+              onView={eventViewHandler}
+              onSuccess={(message: string) => {
+                toast.success(message, { transition: Slide });
+              }}
+              onError={(message: string) => {
+                toast.error(message, { transition: Slide });
+              }}
+              refetchTable={refetch}
+              listPermissions={listPermissions}
+            />
+          )}
         </ComponentCard>
       </div>
 
-     
+      <TryoutDetailModal
+        key={
+          isOpen
+            ? `modal-${isEditMode}-${selectedId ? selectedId : ""}`
+            : "modal-closed"
+        }
+        isOpen={isOpen}
+        closeModal={closeModal}
+        isEditMode={isEditMode}
+        selectedId={selectedId}
+        refetchData={refetch}
+        onSuccess={(message: string) => {
+          toast.success(message, { transition: Slide });
+        }}
+        onError={(message: string) => {
+          toast.success(message, { transition: Slide });
+        }}
+      />
     </>
   );
-};
+}

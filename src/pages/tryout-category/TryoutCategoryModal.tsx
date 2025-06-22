@@ -90,16 +90,18 @@ export function TryoutCategoryModal({
   };
 
   const eventSelectChangeHandler = (value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      organization_id: value.organization_id,
-    }));
-
-    setSelectedOrganization({
-      ...selectedOrganization,
-      organization_id: value?.organization_id,
-      name: value?.name,
-    });
+    if(value != null) {
+      setFormData((prev) => ({
+        ...prev,
+        organization_id: value.organization_id,
+      }));
+  
+      setSelectedOrganization({
+        ...selectedOrganization,
+        organization_id: value?.organization_id,
+        name: value?.name,
+      });
+    }
   };
 
   const eventCloseModalHandler = () => {
@@ -109,8 +111,6 @@ export function TryoutCategoryModal({
 
   const eventSubmitHandler = async (e: any) => {
     e.preventDefault();
-
-    console.log({formData})
     try {
       let message: string = "";
       if (isEditMode) {

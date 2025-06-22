@@ -66,3 +66,30 @@ export const getListModeAnswer = (typeName: any = null): any => {
   
   return items
 }
+
+export const getListModeLayout = (typeName: any = null): any => {
+  const items = [
+    {id: 'layout-cat', name: 'CAT'},
+    {id: 'layout-universal', name: 'Universal'},
+  ];
+
+  if(typeName != null) {
+    return items.find((x) => x.id == typeName)
+  }
+  
+  return items
+}
+
+export const getListSatuanDuration = (typeName: any = null): any => {
+  const items = [
+    {id: 'detik', name: 'Detik'},
+    {id: 'menit', name: 'Menit'},
+    {id: 'jam', name: 'Jam'}
+  ];
+
+  if(typeName != null) {
+    return items.find((x) => x.id == typeName)
+  }
+  
+  return items
+}

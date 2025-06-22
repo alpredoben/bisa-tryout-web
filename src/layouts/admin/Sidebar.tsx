@@ -90,7 +90,6 @@ const Sidebar: React.FC = () => {
     if(nav?.menu_icon && nav?.menu_icon != null) {
       return nav?.menu_icon?.file_url
     }
-    console.log({name: nav.menu_name as IconKey, nav})
     return IconMenu[nav.menu_name as IconKey];
   };
 

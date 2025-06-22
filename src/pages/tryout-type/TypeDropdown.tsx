@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type React from "react";
 import { Combobox } from "@headlessui/react";
-import type { I_CategoryTryoutDropdownProps } from "../../interfaces/tryoutInterface";
+import type { I_TypeTryoutDropdownProps } from "../../interfaces/tryoutInterface";
 import { useEffect, useState } from "react";
 import { useFetchDataQuery } from "../../services/tryoutTypeApi";
 
-export const TypeDropdown: React.FC<I_CategoryTryoutDropdownProps> = ({
+export const TypeDropdown: React.FC<I_TypeTryoutDropdownProps> = ({
   value,
   onChange,
 }) => {
@@ -53,7 +53,7 @@ export const TypeDropdown: React.FC<I_CategoryTryoutDropdownProps> = ({
           {!isLoading &&
             records.map((item: any) => (
               <Combobox.Option
-                key={item.category_id}
+                key={item.type_id}
                 value={item}
                 className={({ active }) =>
                   `cursor-pointer px-4 py-2 text-sm ${

@@ -25,6 +25,8 @@ import { TryoutCategoryPage, TryoutCategoryView } from "./pages/tryout-category"
 import { TryoutStagePage, TryoutStageView } from "./pages/tryout-stage";
 import { TryoutTypePage, TryoutTypeView } from "./pages/tryout-type";
 import { TryoutDetailPage, TryoutDetailView } from "./pages/tryout-detail";
+import { Examination1Page } from "./pages/examination-1";
+import { Examination2Page } from "./pages/examination-2";
 
 const App = () => {
   // Mengambil status autentikasi dari Redux store
@@ -63,6 +65,9 @@ const App = () => {
             path="/register"
             element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" />}
           />
+
+          <Route path="/examination-1" element={<Examination1Page />} />
+          <Route path="/examination-2" element={<Examination2Page />} />
 
           <Route path="/403" element={<ForbiddenPage />} />
           <Route path="*" element={<NotFoundPage />} />

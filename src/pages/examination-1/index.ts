@@ -1,0 +1,1 @@
+export {default as Examination1Page} from './Examination1Page'

@@ -1,0 +1,1 @@
+export {default as Examination2Page} from './Examination2Page'
